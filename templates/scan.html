@@ -1,0 +1,553 @@
+{% extends "base.html" %}
+{% block title %}Run Scan — CSA{% endblock %}
+{% block page_title %}Run Security Scan{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ── Scan Overlay ── */
+  .scan-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(13, 17, 23, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .scan-overlay.active {
+    display: flex;
+  }
+
+  /* Floating particles */
+  .scan-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .scan-particles .dot {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: rgba(88, 166, 255, 0.3);
+    border-radius: 50%;
+    animation: floatDot 6s ease-in-out infinite;
+  }
+
+  @keyframes floatDot {
+
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+      opacity: 0.2;
+    }
+
+    50% {
+      transform: translateY(-80px) scale(1.5);
+      opacity: 0.6;
+    }
+  }
+
+  /* Main scanning card */
+  .scan-card {
+    background: rgba(22, 27, 34, 0.95);
+    border: 1px solid rgba(88, 166, 255, 0.2);
+    border-radius: 16px;
+    padding: 48px 56px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 60px rgba(88, 166, 255, 0.08), 0 0 120px rgba(31, 111, 235, 0.04);
+    max-width: 480px;
+    width: 90%;
+  }
+
+  /* Radar spinner */
+  .radar-container {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 28px;
+    position: relative;
+  }
+
+  .radar-ring {
+    position: absolute;
+    inset: 0;
+    border: 2px solid rgba(88, 166, 255, 0.15);
+    border-radius: 50%;
+    animation: radarPulse 2s ease-out infinite;
+  }
+
+  .radar-ring:nth-child(2) {
+    inset: 12px;
+    animation-delay: 0.4s;
+    border-color: rgba(88, 166, 255, 0.25);
+  }
+
+  .radar-ring:nth-child(3) {
+    inset: 24px;
+    animation-delay: 0.8s;
+    border-color: rgba(88, 166, 255, 0.35);
+  }
+
+  @keyframes radarPulse {
+    0% {
+      transform: scale(0.95);
+      opacity: 1;
+    }
+
+    100% {
+      transform: scale(1.3);
+      opacity: 0;
+    }
+  }
+
+  .radar-sweep {
+    position: absolute;
+    inset: 24px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0%, rgba(88, 166, 255, 0.3) 30%, transparent 40%);
+    animation: radarSweep 2s linear infinite;
+  }
+
+  @keyframes radarSweep {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .radar-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    background: radial-gradient(circle, rgba(88, 166, 255, 0.4), transparent 70%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .radar-center::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: #58a6ff;
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(88, 166, 255, 0.8);
+    animation: centerPulse 1.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes centerPulse {
+    0% {
+      box-shadow: 0 0 8px rgba(88, 166, 255, 0.5);
+      transform: scale(1);
+    }
+
+    100% {
+      box-shadow: 0 0 20px rgba(88, 166, 255, 1);
+      transform: scale(1.3);
+    }
+  }
+
+  .scan-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .scan-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  /* Rotating status message */
+  .scan-status-msg {
+    font-size: 14px;
+    font-weight: 500;
+    color: #58a6ff;
+    min-height: 24px;
+    transition: opacity 0.3s;
+    margin-bottom: 20px;
+  }
+
+  /* Progress bar (indeterminate) */
+  .scan-progress-track {
+    width: 100%;
+    height: 4px;
+    background: var(--dark3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .scan-progress-bar {
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, #1f6feb, #58a6ff, #388bfd);
+    border-radius: 4px;
+    animation: progressSlide 1.8s ease-in-out infinite;
+  }
+
+  @keyframes progressSlide {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(350%);
+    }
+  }
+
+  /* Timer */
+  .scan-timer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .scan-timer .dot {
+    width: 6px;
+    height: 6px;
+    background: #3fb950;
+    border-radius: 50%;
+    animation: timerBlink 1s infinite;
+  }
+
+  @keyframes timerBlink {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.3;
+    }
+  }
+
+  /* Provider badge */
+  .scan-provider-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .scan-provider-badge.aws {
+    background: rgba(255, 153, 0, 0.12);
+    color: #ff9900;
+    border: 1px solid rgba(255, 153, 0, 0.2);
+  }
+
+  .scan-provider-badge.azure {
+    background: rgba(0, 120, 212, 0.12);
+    color: #0078d4;
+    border: 1px solid rgba(0, 120, 212, 0.2);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="max-width:700px;">
+  {% if not accounts %}
+  <div class="card card-body" style="text-align:center;padding:40px;">
+    <div style="font-size:36px;margin-bottom:12px;">⊞</div>
+    <strong>No Cloud Accounts Connected</strong>
+    <p class="text-muted mt-1">You need to add an AWS or Azure account before running a scan.</p>
+    <a href="{{ url_for('add_account') }}" class="btn btn-success mt-2">+ Add Cloud Account</a>
+  </div>
+  {% else %}
+  <form method="POST" action="{{ url_for('run_scan') }}" id="scan-form">
+    <div class="card mb-2">
+      <div class="card-header"><span class="card-title">Scan Configuration</span></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Scan Name</label>
+          <input type="text" name="scan_name" class="form-control" value="Security Audit {{ now }}"
+            placeholder="My Security Scan">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cloud Account *</label>
+          <select name="account_id" id="account-select" class="form-control form-select" required
+            onchange="onAccountChange(this)">
+            <option value="">— Select Account —</option>
+            {% for a in accounts %}
+            <option value="{{ a.id }}" data-provider="{{ a.provider }}">{{ a.alias }} ({{ a.provider|upper }} / {{
+              a.region }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- AWS Security Checks -->
+    <div class="card mb-2" id="aws-checks">
+      <div class="card-header"><span class="card-title">🟡 AWS Security Checks</span></div>
+      <div class="card-body">
+        <p class="text-muted mb-2" style="font-size:12px;">Select the AWS service categories to audit:</p>
+        <div class="grid grid-3" style="gap:10px;">
+          {% set aws_checks = [
+          ('iam','IAM / Identity','Users, MFA, password policy, stale keys, admin policies','🔑'),
+          ('s3','S3 Storage','Public access, encryption, versioning, HTTPS policy, ACLs','🪣'),
+          ('ec2','EC2 Compute','EBS encryption, IMDSv2, public snapshots, AMIs','⚙'),
+          ('sg','Security Groups','25+ dangerous ports, all-traffic rules, egress, default SG','🛡'),
+          ('cloudtrail','CloudTrail','Logging, validation, multi-region, KMS, S3 bucket safety','📋'),
+          ('rds','RDS Databases','Encryption, public access, backups, deletion protection','🗄'),
+          ('vpc','VPC & Network','Flow logs, default VPC, NACLs, peering connections','🌐'),
+          ('kms','KMS Keys','Customer key rotation, public key policies','🔐'),
+          ('lambda','Lambda Functions','Deprecated runtimes, public invoke, secrets in env vars','λ'),
+          ('elb','Load Balancers','Access logs, TLS policy, HTTP→HTTPS redirect','⚖'),
+          ('config','AWS Config','Config recorder, delivery channel, compliance tracking','⚙'),
+          ('guardduty','GuardDuty','Threat detection, detector status, finding frequency','🔍'),
+          ] %}
+          {% for id, name, desc, icon in aws_checks %}
+          <label class="scan-check-label"
+            style="display:flex;gap:12px;align-items:flex-start;background:var(--dark3);border:1px solid var(--border);border-radius:6px;padding:12px;cursor:pointer;transition:border-color .15s;"
+            onmouseover="this.style.borderColor='#58a6ff'" onmouseout="this.style.borderColor='#30363d'">
+            <input type="checkbox" name="categories" value="{{ id }}" class="aws-cat" checked
+              style="margin-top:2px;accent-color:#58a6ff;">
+            <div>
+              <div style="font-size:13px;font-weight:600;">{{ icon }} {{ name }}</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">{{ desc }}</div>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Azure Security Checks -->
+    <div class="card mb-2" id="azure-checks" style="display:none;">
+      <div class="card-header"><span class="card-title">🔵 Azure Security Checks</span></div>
+      <div class="card-body">
+        <p class="text-muted mb-2" style="font-size:12px;">Select the Azure service categories to audit (CIS Azure
+          v2.0):</p>
+        <div class="grid grid-3" style="gap:10px;">
+          {% set azure_checks = [
+          ('iam','IAM / Azure AD','Service principals, Owner role assignments, PIM usage','🔑'),
+          ('storage','Storage Accounts','Public blob, HTTPS-only, TLS version, soft delete, network rules','🗄'),
+          ('vm','Virtual Machines','Disk encryption, managed disks, boot diagnostics','💻'),
+          ('nsg','Network Security Groups','SSH/RDP/dangerous ports exposed to Internet','🛡'),
+          ('keyvault','Key Vault','Soft delete, purge protection, network access, permissions','🔐'),
+          ('sql','Azure SQL','TDE, auditing, threat protection, public access','🗃'),
+          ('monitor','Monitor & Logging','Diagnostic settings, activity log alerts, Security Center','📊'),
+          ] %}
+          {% for id, name, desc, icon in azure_checks %}
+          <label class="scan-check-label"
+            style="display:flex;gap:12px;align-items:flex-start;background:var(--dark3);border:1px solid var(--border);border-radius:6px;padding:12px;cursor:pointer;transition:border-color .15s;"
+            onmouseover="this.style.borderColor='#0078d4'" onmouseout="this.style.borderColor='#30363d'">
+            <input type="checkbox" name="categories" value="{{ id }}" class="azure-cat" checked
+              style="margin-top:2px;accent-color:#0078d4;">
+            <div>
+              <div style="font-size:13px;font-weight:600;">{{ icon }} {{ name }}</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">{{ desc }}</div>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-2">
+      <div class="card-body" style="background:rgba(88,166,255,.06);">
+        <div class="flex items-center gap-2">
+          <span style="font-size:20px;">ℹ</span>
+          <div>
+            <strong style="font-size:13px;">Read-Only Scan</strong>
+            <p class="text-muted" style="font-size:12px;margin-top:2px;">CSA uses read-only API access. No changes are
+              made to your cloud environment. Required permissions: <span class="mono">SecurityAudit /
+                ReadOnlyAccess</span> (AWS) or <span class="mono">Reader</span> (Azure).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="padding:10px 28px;font-size:14px;" id="scan-submit-btn">
+      ⊙ Start Security Scan
+    </button>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline" style="margin-left:8px;">Cancel</a>
+  </form>
+  {% endif %}
+</div>
+
+<!-- ════ Scanning Animation Overlay ════ -->
+<div class="scan-overlay" id="scan-overlay">
+  <div class="scan-particles" id="scan-particles"></div>
+  <div class="scan-card">
+    <div class="radar-container">
+      <div class="radar-ring"></div>
+      <div class="radar-ring"></div>
+      <div class="radar-ring"></div>
+      <div class="radar-sweep"></div>
+      <div class="radar-center"></div>
+    </div>
+    <div class="scan-title">Scanning in Progress</div>
+    <div class="scan-subtitle">Analyzing your cloud environment for security issues</div>
+    <div class="scan-provider-badge" id="scan-provider-badge"></div>
+    <div class="scan-status-msg" id="scan-status-msg">Initializing scanner…</div>
+    <div class="scan-progress-track">
+      <div class="scan-progress-bar"></div>
+    </div>
+    <div class="scan-timer">
+      <span class="dot"></span>
+      Elapsed: <span id="scan-timer-val">00:00</span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Auto set scan name with today's date
+  document.addEventListener('DOMContentLoaded', function () {
+    const inp = document.querySelector('input[name="scan_name"]');
+    if (inp) {
+      const d = new Date();
+      inp.value = `Security Audit ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    }
+
+    // Trigger once on load in case first account is pre-selected
+    const sel = document.getElementById('account-select');
+    if (sel && sel.value) onAccountChange(sel);
+
+    // Generate floating particles
+    const particlesEl = document.getElementById('scan-particles');
+    if (particlesEl) {
+      for (var i = 0; i < 30; i++) {
+        var dot = document.createElement('div');
+        dot.className = 'dot';
+        dot.style.left = Math.random() * 100 + '%';
+        dot.style.top = Math.random() * 100 + '%';
+        dot.style.animationDelay = (Math.random() * 6) + 's';
+        dot.style.animationDuration = (4 + Math.random() * 4) + 's';
+        particlesEl.appendChild(dot);
+      }
+    }
+  });
+
+  // Build a map of account_id -> provider from the options
+  function onAccountChange(sel) {
+    var opt = sel.options[sel.selectedIndex];
+    var provider = opt ? (opt.getAttribute('data-provider') || 'aws') : 'aws';
+    var isAzure = provider === 'azure';
+
+    document.getElementById('aws-checks').style.display = isAzure ? 'none' : '';
+    document.getElementById('azure-checks').style.display = isAzure ? '' : 'none';
+
+    // Toggle the disabled state so unchecked items from hidden section don't submit
+    document.querySelectorAll('.aws-cat').forEach(function (el) { el.disabled = isAzure; });
+    document.querySelectorAll('.azure-cat').forEach(function (el) { el.disabled = !isAzure; });
+  }
+
+  // ── Scan animation overlay ──
+  var awsMessages = [
+    '🔑 Checking IAM users & policies…',
+    '🔑 Verifying MFA configurations…',
+    '🪣 Analyzing S3 bucket security…',
+    '🪣 Checking storage encryption…',
+    '⚙ Inspecting EC2 instances…',
+    '🛡 Reviewing security group rules…',
+    '🛡 Scanning for open ports…',
+    '📋 Verifying CloudTrail logging…',
+    '🗄 Checking RDS configurations…',
+    '🌐 Analyzing VPC network settings…',
+    '🔐 Validating KMS key rotation…',
+    'λ Checking Lambda functions…',
+    '⚖ Reviewing load balancer configs…',
+    '🔍 Analyzing GuardDuty findings…',
+    '📊 Calculating risk scores…',
+    '✅ Compiling security report…',
+  ];
+
+  var azureMessages = [
+    '🔑 Checking Azure AD configurations…',
+    '🔑 Reviewing service principal permissions…',
+    '🗄 Analyzing storage account security…',
+    '🗄 Checking blob public access…',
+    '💻 Inspecting virtual machines…',
+    '💻 Verifying disk encryption…',
+    '🛡 Scanning network security groups…',
+    '🛡 Checking for exposed ports…',
+    '🔐 Reviewing Key Vault settings…',
+    '🔐 Verifying purge protection…',
+    '🗃 Checking Azure SQL security…',
+    '🗃 Validating TDE encryption…',
+    '📊 Reviewing monitoring settings…',
+    '📊 Checking diagnostic logs…',
+    '📊 Calculating risk scores…',
+    '✅ Compiling security report…',
+  ];
+
+  var scanForm = document.getElementById('scan-form');
+  if (scanForm) {
+    scanForm.addEventListener('submit', function () {
+      var overlay = document.getElementById('scan-overlay');
+      var submitBtn = document.getElementById('scan-submit-btn');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '⏳ Scanning…'; }
+
+      // Determine provider
+      var sel = document.getElementById('account-select');
+      var opt = sel ? sel.options[sel.selectedIndex] : null;
+      var provider = (opt && opt.getAttribute('data-provider')) || 'aws';
+      var isAzure = provider === 'azure';
+
+      // Set provider badge
+      var badge = document.getElementById('scan-provider-badge');
+      if (badge) {
+        badge.className = 'scan-provider-badge ' + provider;
+        badge.textContent = isAzure ? '☁ Microsoft Azure' : '☁ Amazon Web Services';
+      }
+
+      // Show overlay
+      overlay.classList.add('active');
+
+      // Rotating messages
+      var msgs = isAzure ? azureMessages : awsMessages;
+      var msgIdx = 0;
+      var msgEl = document.getElementById('scan-status-msg');
+      function rotateMsg() {
+        if (msgEl) {
+          msgEl.style.opacity = '0';
+          setTimeout(function () {
+            msgIdx = (msgIdx + 1) % msgs.length;
+            msgEl.textContent = msgs[msgIdx];
+            msgEl.style.opacity = '1';
+          }, 300);
+        }
+      }
+      setInterval(rotateMsg, 3000);
+
+      // Elapsed timer
+      var startTime = Date.now();
+      var timerEl = document.getElementById('scan-timer-val');
+      setInterval(function () {
+        var elapsed = Math.floor((Date.now() - startTime) / 1000);
+        var min = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        var sec = String(elapsed % 60).padStart(2, '0');
+        if (timerEl) timerEl.textContent = min + ':' + sec;
+      }, 1000);
+    });
+  }
+</script>
+{% endblock %}

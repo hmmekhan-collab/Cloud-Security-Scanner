@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+{% block title %}Security Reports — CSA{% endblock %}
+{% block page_title %}Security Reports{% endblock %}
+
+{% block topbar_actions %}
+<a href="{{ url_for('scan') }}" class="btn btn-primary">⊕ New Scan</a>
+<a href="{{ url_for('scans') }}" class="btn btn-outline">⊡ All Scans</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .rpt-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .rpt-kpi {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .rpt-kpi-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .rpt-kpi-val {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .rpt-kpi-lbl {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-top: 3px;
+  }
+
+  .rpt-charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .chart-wrap {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .chart-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .donut-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .donut-svg {
+    flex-shrink: 0;
+  }
+
+  .donut-legend {
+    flex: 1;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-val {
+    font-weight: 700;
+    margin-left: auto;
+  }
+
+  .bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .bar-label {
+    width: 80px;
+    color: var(--muted);
+    flex-shrink: 0;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 22px;
+    background: var(--dark3);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    min-width: 22px;
+  }
+
+  .bar-count {
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+  }
+
+  .fmt-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .fmt-card {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .fmt-icon {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .fmt-val {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .fmt-lbl {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+
+  .scan-link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .scan-link:hover {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% set total = reports|length %}
+{% set pdf_count = reports | selectattr('format','equalto','pdf') | list | length %}
+{% set csv_count = reports | selectattr('format','equalto','csv') | list | length %}
+{% set json_count = reports | selectattr('format','equalto','json') | list | length %}
+{% set html_count = reports | selectattr('format','equalto','html') | list | length %}
+{% set xml_count = reports | selectattr('format','equalto','xml') | list | length %}
+{% set scan_ids = namespace(ids=[]) %}
+{% for r in reports %}{% if r.scan_id not in scan_ids.ids %}{% set scan_ids.ids = scan_ids.ids + [r.scan_id] %}{% endif
+%}{% endfor %}
+
+{# KPI Row #}
+<div class="rpt-kpi-grid">
+  <div class="rpt-kpi">
+    <div class="rpt-kpi-icon" style="background:rgba(88,166,255,.15);">⊡</div>
+    <div>
+      <div class="rpt-kpi-val text-accent">{{ total }}</div>
+      <div class="rpt-kpi-lbl">Total Reports</div>
+    </div>
+  </div>
+  <div class="rpt-kpi">
+    <div class="rpt-kpi-icon" style="background:rgba(248,81,73,.15);">📄</div>
+    <div>
+      <div class="rpt-kpi-val" style="color:#f85149;">{{ pdf_count }}</div>
+      <div class="rpt-kpi-lbl">PDF Reports</div>
+    </div>
+  </div>
+  <div class="rpt-kpi">
+    <div class="rpt-kpi-icon" style="background:rgba(63,185,80,.15);">📊</div>
+    <div>
+      <div class="rpt-kpi-val text-success">{{ csv_count }}</div>
+      <div class="rpt-kpi-lbl">CSV Exports</div>
+    </div>
+  </div>
+  <div class="rpt-kpi">
+    <div class="rpt-kpi-icon" style="background:rgba(188,140,255,.15);">⊞</div>
+    <div>
+      <div class="rpt-kpi-val" style="color:#bc8cff;">{{ scan_ids.ids|length }}</div>
+      <div class="rpt-kpi-lbl">Scans Covered</div>
+    </div>
+  </div>
+</div>
+
+{# Charts #}
+{% if total > 0 %}
+<div class="rpt-charts-row">
+
+  {# SVG Donut Chart #}
+  <div class="chart-wrap">
+    <div class="chart-title">📊 Report Format Distribution</div>
+    <div class="donut-container">
+      <svg class="donut-svg" width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r="43" fill="none" stroke="#21262d" stroke-width="24" />
+        {% if total > 0 %}
+        {% set ns = namespace(offset=0.0) %}
+        {% set slices =
+        [('PDF',pdf_count,'#f85149'),('CSV',csv_count,'#3fb950'),('JSON',json_count,'#58a6ff'),('HTML',html_count,'#d29922'),('XML',xml_count,'#bc8cff')]
+        %}
+        {% for label,count,color in slices %}
+        {% if count > 0 %}
+        {% set pct = count / total %}
+        {% set circ = 270.18 %}
+        {% set dash = pct * circ %}
+        {% set gap = circ - dash %}
+        <circle cx="70" cy="70" r="43" fill="none" stroke="{{ color }}" stroke-width="24"
+          stroke-dasharray="{{ dash | round(2) }} {{ gap | round(2) }}"
+          stroke-dashoffset="{{ (-ns.offset * circ) | round(2) }}" transform="rotate(-90 70 70)" opacity=".9" />
+        {% set ns.offset = ns.offset + pct %}
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        <text x="70" y="65" text-anchor="middle" fill="#e6edf3" font-size="20" font-weight="700">{{ total }}</text>
+        <text x="70" y="80" text-anchor="middle" fill="#8b949e" font-size="9" letter-spacing="1">REPORTS</text>
+      </svg>
+      <div class="donut-legend">
+        {% for label,count,color in
+        [('PDF',pdf_count,'#f85149'),('CSV',csv_count,'#3fb950'),('JSON',json_count,'#58a6ff'),('HTML',html_count,'#d29922'),('XML',xml_count,'#bc8cff')]
+        %}
+        <div class="legend-item">
+          <div class="legend-dot" style="background:{{ color }};"></div>
+          <span style="color:var(--muted);">{{ label }}</span>
+          <span class="legend-val" style="color:{{ color }};">{{ count }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# Bar Chart — per scan #}
+  <div class="chart-wrap">
+    <div class="chart-title">📈 Reports per Scan</div>
+    <div class="bar-chart">
+      {% set seen = namespace(ids={}, shown=0) %}
+      {% for r in reports %}
+      {% if r.scan_id not in seen.ids %}
+      {% set _ = seen.ids.update({r.scan_id: reports | selectattr('scan_id','equalto',r.scan_id) | list | length}) %}
+      {% endif %}
+      {% endfor %}
+      {% set bar_colors = ['#58a6ff','#3fb950','#f85149','#d29922','#bc8cff'] %}
+      {% set max_v = namespace(v=1) %}
+      {% for sid, cnt in seen.ids.items() %}{% if cnt > max_v.v %}{% set max_v.v = cnt %}{% endif %}{% endfor %}
+      {% set idx = namespace(i=0) %}
+      {% for sid, cnt in seen.ids.items() %}
+      {% if idx.i < 5 %} <div class="bar-row">
+        <div class="bar-label" title="Scan #{{ sid }}">Scan #{{ sid }}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:{{ (cnt/max_v.v*100)|int }}%;background:{{ bar_colors[idx.i % 5] }};">
+            <span class="bar-count">{{ cnt }}</span>
+          </div>
+        </div>
+    </div>
+    {% set idx.i = idx.i + 1 %}
+    {% endif %}
+    {% endfor %}
+    {% if seen.ids|length == 0 %}
+    <div class="text-muted" style="font-size:12px;text-align:center;padding:20px 0;">No data yet</div>
+    {% endif %}
+  </div>
+</div>
+
+</div>
+{% endif %}
+
+{# Format Pills #}
+<div class="fmt-grid">
+  <div class="fmt-card" style="border-color:rgba(248,81,73,.3);">
+    <div class="fmt-icon">📄</div>
+    <div class="fmt-val" style="color:#f85149;">{{ pdf_count }}</div>
+    <div class="fmt-lbl">PDF</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:4px;">executive docs</div>
+  </div>
+  <div class="fmt-card" style="border-color:rgba(63,185,80,.3);">
+    <div class="fmt-icon">📊</div>
+    <div class="fmt-val" style="color:#3fb950;">{{ csv_count }}</div>
+    <div class="fmt-lbl">CSV</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:4px;">data exports</div>
+  </div>
+  <div class="fmt-card" style="border-color:rgba(88,166,255,.3);">
+    <div class="fmt-icon">{ }</div>
+    <div class="fmt-val" style="color:#58a6ff;">{{ json_count }}</div>
+    <div class="fmt-lbl">JSON</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:4px;">api ready</div>
+  </div>
+  <div class="fmt-card" style="border-color:rgba(210,153,34,.3);">
+    <div class="fmt-icon">🌐</div>
+    <div class="fmt-val" style="color:#d29922;">{{ html_count }}</div>
+    <div class="fmt-lbl">HTML</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:4px;">web reports</div>
+  </div>
+  <div class="fmt-card" style="border-color:rgba(188,140,255,.3);">
+    <div class="fmt-icon">📝</div>
+    <div class="fmt-val" style="color:#bc8cff;">{{ xml_count }}</div>
+    <div class="fmt-lbl">XML</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:4px;">structured data</div>
+  </div>
+</div>
+
+{# Reports Table #}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Generated Documents — {{ total }} file{{ 's' if total != 1 }}</span>
+    {% if total > 0 %}<span class="text-muted" style="font-size:11px;">Click scan # to view findings</span>{% endif %}
+  </div>
+  {% if reports %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Document</th>
+        <th>Format</th>
+        <th>Origin Scan</th>
+        <th>Generated</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in reports %}
+      <tr>
+        <td>
+          <div style="font-size:13px;font-weight:600;">{{ r.report_name }}</div>
+          <div style="font-size:11px;color:var(--muted);">ID #{{ r.id }}</div>
+        </td>
+        <td>
+          {% if r.format == 'pdf' %}<span class="badge" style="background:rgba(248,81,73,.15);color:#f85149;">📄
+            PDF</span>
+          {% elif r.format == 'csv' %}<span class="badge" style="background:rgba(63,185,80,.15);color:#3fb950;">📊
+            CSV</span>
+          {% elif r.format == 'json' %}<span class="badge" style="background:rgba(88,166,255,.15);color:#58a6ff;">{ }
+            JSON</span>
+          {% elif r.format == 'html' %}<span class="badge" style="background:rgba(210,153,34,.15);color:#d29922;">🌐
+            HTML</span>
+          {% elif r.format == 'xml' %}<span class="badge" style="background:rgba(188,140,255,.15);color:#bc8cff;">📝
+            XML</span>
+          {% else %}<span class="badge badge-muted">{{ r.format|upper }}</span>{% endif %}
+        </td>
+        <td><a href="{{ url_for('scan_results', scan_id=r.scan_id) }}" class="scan-link">⊡ #{{ r.scan_id }}</a></td>
+        <td class="text-muted" style="font-size:12px;">{{ r.created_at|format_date('%b %d, %Y %H:%M') }}</td>
+        <td>
+          <a href="{{ url_for('download_report', rid=r.id) }}" class="btn btn-success btn-sm">↓ Download</a>
+          <form method="POST" action="{{ url_for('delete_report', rid=r.id) }}" style="display:inline;"
+            onsubmit="return confirm('Delete this report?')">
+            <button type="submit" class="btn btn-danger btn-sm">✕</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state" style="padding:50px;">
+    <div class="icon">⊡</div>
+    <strong>No Reports Generated Yet</strong>
+    <p>Complete a scan and generate a report from the scan results page</p>
+    <a href="{{ url_for('scan') }}" class="btn btn-primary mt-2">⊕ Run a Scan First</a>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

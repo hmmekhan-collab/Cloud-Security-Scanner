@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Scan History — CSA{% endblock %}
+{% block page_title %}Scan History{% endblock %}
+{% block topbar_actions %}
+<a href="{{ url_for('scan') }}" class="btn btn-primary">⊙ New Scan</a>
+{% endblock %}
+{% block content %}
+{% if scans %}
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Scan Name</th>
+        <th>Provider</th>
+        <th>Findings</th>
+        <th>Risk Score</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in scans %}
+      <tr>
+        <td>
+          <a href="{{ url_for('scan_results', scan_id=s.id) }}"
+            style="color:var(--accent);text-decoration:none;font-weight:500;">{{ s.scan_name or 'Scan #'+s.id|string
+            }}</a>
+        </td>
+        <td><span class="badge badge-info">{{ (s.provider or 'AWS')|upper }}</span></td>
+        <td>
+          {% if s.high_count %}<span class="badge badge-high">{{ s.high_count }}H</span> {% endif %}
+          {% if s.medium_count %}<span class="badge badge-medium">{{ s.medium_count }}M</span> {% endif %}
+          {% if s.low_count %}<span class="badge badge-low">{{ s.low_count }}L</span> {% endif %}
+          {% if not s.total_findings %}<span class="text-muted">0</span>{% endif %}
+        </td>
+        <td>
+          {% set sc = s.risk_score %}
+          <span
+            style="font-weight:600;color:{% if sc >= 70 %}#3fb950{% elif sc >= 40 %}#d29922{% else %}#f85149{% endif %};">{{
+            sc }}/100</span>
+        </td>
+        <td class="text-muted" style="font-size:12px;">{{ s.created_at|format_date('%Y-%m-%d %H:%M') }}</td>
+        <td>
+          {% if s.status == 'completed' %}<span class="badge badge-success">✓ Done</span>
+          {% elif s.status == 'failed' %}<span class="badge" style="background:rgba(248,81,73,.15);color:#f85149;">✗
+            Failed</span>
+          {% else %}<span class="badge badge-muted">{{ s.status }}</span>{% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('scan_results', scan_id=s.id) }}" class="btn btn-outline btn-sm">View</a>
+          <form method="POST" action="{{ url_for('delete_scan', sid=s.id) }}" style="display:inline;"
+            onsubmit="return confirm('Delete this scan?')">
+            <button type="submit" class="btn btn-danger btn-sm">✗</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card card-body empty-state" style="padding:50px;">
+  <div class="icon">⊙</div>
+  <strong>No Scans Yet</strong>
+  <p>Run your first security scan to see results</p>
+  <a href="{{ url_for('scan') }}" class="btn btn-primary mt-2">Start Scanning</a>
+</div>
+{% endif %}
+{% endblock %}

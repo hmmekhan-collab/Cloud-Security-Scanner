@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Add Account — CSA{% endblock %}
+{% block page_title %}Add Cloud Account{% endblock %}
+{% block content %}
+<div style="max-width:640px;">
+  <form method="POST">
+    <div class="card mb-2">
+      <div class="card-header"><span class="card-title">Account Details</span></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Cloud Provider</label>
+          <select name="provider" id="provider-select" class="form-control form-select" required onchange="toggleProvider(this.value)">
+            <option value="aws">Amazon Web Services (AWS)</option>
+            <option value="azure">Microsoft Azure</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account Alias / Nickname *</label>
+          <input type="text" name="alias" class="form-control" placeholder="e.g. Production AWS, Dev Azure" required>
+          <div class="form-hint">A friendly name to identify this account</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AWS Credentials -->
+    <div class="card mb-2" id="aws-creds">
+      <div class="card-header"><span class="card-title">AWS Credentials</span></div>
+      <div class="card-body">
+        <div style="background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.2);border-radius:6px;padding:12px 14px;margin-bottom:16px;font-size:12px;">
+          <strong style="color:#d29922;">⚠ Security Note:</strong>
+          <span class="text-muted"> Use an IAM user with <strong>ReadOnlyAccess</strong> or <strong>SecurityAudit</strong> policy only. Never use root credentials.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">AWS Access Key ID *</label>
+          <input type="text" name="access_key" id="aws-access-key" class="form-control mono" placeholder="AKIAIOSFODNN7EXAMPLE">
+        </div>
+        <div class="form-group">
+          <label class="form-label">AWS Secret Access Key *</label>
+          <input type="password" name="secret_key" id="aws-secret-key" class="form-control mono" placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY">
+          <div class="form-hint">Stored encrypted in the database</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Default Region</label>
+          <select name="region" id="aws-region" class="form-control form-select">
+            <option value="us-east-1">US East 1 (N. Virginia)</option>
+            <option value="us-east-2">US East 2 (Ohio)</option>
+            <option value="us-west-1">US West 1 (N. California)</option>
+            <option value="us-west-2">US West 2 (Oregon)</option>
+            <option value="eu-west-1">EU West 1 (Ireland)</option>
+            <option value="eu-west-2">EU West 2 (London)</option>
+            <option value="eu-central-1">EU Central 1 (Frankfurt)</option>
+            <option value="ap-south-1">Asia Pacific (Mumbai)</option>
+            <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+            <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- AWS Permissions note -->
+    <div class="card mb-2" id="aws-perms">
+      <div class="card-header"><span class="card-title">Required IAM Permissions</span></div>
+      <div class="card-body">
+        <p class="text-muted mb-2" style="font-size:12px;">Attach one of these managed policies to your IAM user:</p>
+        <div style="background:var(--dark3);border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:var(--accent);">
+          ✓ arn:aws:iam::aws:policy/SecurityAudit<br>
+          ✓ arn:aws:iam::aws:policy/ReadOnlyAccess
+        </div>
+        <p class="form-hint mt-1">Or create a custom policy with: iam:Get*, iam:List*, s3:Get*, s3:List*, ec2:Describe*, cloudtrail:Describe*,  rds:Describe*</p>
+      </div>
+    </div>
+
+    <!-- Azure Credentials -->
+    <div class="card mb-2" id="azure-creds" style="display:none;">
+      <div class="card-header"><span class="card-title">Azure Credentials (Service Principal)</span></div>
+      <div class="card-body">
+        <div style="background:rgba(0,120,212,.08);border:1px solid rgba(0,120,212,.2);border-radius:6px;padding:12px 14px;margin-bottom:16px;font-size:12px;">
+          <strong style="color:#58a6ff;">ℹ Azure Note:</strong>
+          <span class="text-muted"> Create a Service Principal with <strong>Reader</strong> role on your subscription. Never use an account with Owner or Contributor access.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tenant ID *</label>
+          <input type="text" name="az_tenant_id" class="form-control mono" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+          <div class="form-hint">Azure Active Directory Tenant ID (Directory ID)</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Client ID (Application ID) *</label>
+          <input type="text" name="az_client_id" class="form-control mono" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+          <div class="form-hint">App Registration &gt; Application (client) ID</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Client Secret *</label>
+          <input type="password" name="az_client_secret" class="form-control mono" placeholder="Your client secret value">
+          <div class="form-hint">App Registration &gt; Certificates &amp; secrets &gt; New client secret</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subscription ID *</label>
+          <input type="text" name="az_subscription_id" class="form-control mono" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+          <div class="form-hint">Azure Portal &gt; Subscriptions &gt; Subscription ID</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Azure Permissions note -->
+    <div class="card mb-2" id="azure-perms" style="display:none;">
+      <div class="card-header"><span class="card-title">Required Azure RBAC Permissions</span></div>
+      <div class="card-body">
+        <p class="text-muted mb-2" style="font-size:12px;">Assign this built-in role to your Service Principal at the subscription level:</p>
+        <div style="background:var(--dark3);border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:var(--accent);">
+          ✓ Reader (subscription scope)<br>
+          ✓ Security Reader (optional — for Security Center checks)
+        </div>
+        <p class="form-hint mt-1">Azure Portal → Subscriptions → Access control (IAM) → Add role assignment</p>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-success" style="padding:10px 24px;" id="save-btn">✓ Save Account</button>
+    <a href="{{ url_for('accounts') }}" class="btn btn-outline" style="margin-left:8px;">Cancel</a>
+  </form>
+</div>
+
+<script>
+function toggleProvider(val) {
+  var isAzure = val === 'azure';
+  document.getElementById('aws-creds').style.display    = isAzure ? 'none' : '';
+  document.getElementById('aws-perms').style.display    = isAzure ? 'none' : '';
+  document.getElementById('azure-creds').style.display  = isAzure ? '' : 'none';
+  document.getElementById('azure-perms').style.display  = isAzure ? '' : 'none';
+
+  // AWS inputs required only when AWS selected
+  document.getElementById('aws-access-key').required = !isAzure;
+  document.getElementById('aws-secret-key').required = !isAzure;
+
+  // Azure inputs required only when Azure selected
+  ['az_tenant_id','az_client_id','az_client_secret','az_subscription_id'].forEach(function(n) {
+    var el = document.querySelector('[name="' + n + '"]');
+    if (el) el.required = isAzure;
+  });
+}
+
+// Override form submit to package Azure creds into the right fields
+document.querySelector('form').addEventListener('submit', function(e) {
+  var provider = document.getElementById('provider-select').value;
+  if (provider !== 'azure') return; // AWS: submit as normal
+
+  e.preventDefault();
+
+  var tenantId      = document.querySelector('[name="az_tenant_id"]').value.trim();
+  var clientId      = document.querySelector('[name="az_client_id"]').value.trim();
+  var clientSecret  = document.querySelector('[name="az_client_secret"]').value.trim();
+  var subscriptionId = document.querySelector('[name="az_subscription_id"]').value.trim();
+
+  // Pack into hidden fields matching the DB schema:
+  //   access_key = tenant_id
+  //   secret_key = JSON {client_id, client_secret}
+  //   region     = subscription_id
+  var f = document.createElement('form');
+  f.method = 'POST';
+  f.action = '';
+  var fields = {
+    provider:   provider,
+    alias:      document.querySelector('[name="alias"]').value,
+    access_key: tenantId,
+    secret_key: JSON.stringify({client_id: clientId, client_secret: clientSecret}),
+    region:     subscriptionId
+  };
+  Object.entries(fields).forEach(function([k,v]) {
+    var inp = document.createElement('input');
+    inp.type = 'hidden'; inp.name = k; inp.value = v;
+    f.appendChild(inp);
+  });
+  document.body.appendChild(f);
+  f.submit();
+});
+</script>
+{% endblock %}

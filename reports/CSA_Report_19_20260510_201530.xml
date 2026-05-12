@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SecurityReport xmlns="https://csa.uow.edu.pk/report/v2" generated="2026-05-10T20:15:30.261034">
+  <Metadata>
+    <Tool>Cloud Security Analyzer (CSA)</Tool>
+    <Version>2.0.0</Version>
+    <Organization>University of Wah</Organization>
+    <Analyst>Admin User</Analyst>
+    <University>University of Wah</University>
+  </Metadata>
+  <ScanSummary>
+    <ScanID>19</ScanID>
+    <ScanName>Security Audit May 10, 2026</ScanName>
+    <Provider>AZURE</Provider>
+    <Status>completed</Status>
+    <ScanDate>2026-05-11T02:58:50.410288+00:00</ScanDate>
+    <Categories>iam,storage,vm,nsg,keyvault,sql,monitor</Categories>
+    <RiskAssessment>
+      <RiskScore>16</RiskScore>
+      <TotalFindings>25</TotalFindings>
+      <CriticalCount>0</CriticalCount>
+      <HighCount>13</HighCount>
+      <MediumCount>9</MediumCount>
+      <LowCount>1</LowCount>
+    </RiskAssessment>
+  </ScanSummary>
+  <Findings count="25">
+    <Finding id="1">
+      <Severity>Critical</Severity>
+      <ResourceType>NSG</ResourceType>
+      <ResourceID>web-nsg</ResourceID>
+      <CheckName>NSG All Inbound Traffic Open: web-nsg</CheckName>
+      <Description>NSG 'web-nsg' allows ALL inbound TCP from Internet (0.0.0.0/0). Complete attack surface exposed.</Description>
+      <Recommendation>Remove all-traffic rule. Specify only required ports.</Recommendation>
+      <Compliance>CIS Azure v2.0 §6.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:52.473568+00:00</DetectedAt>
+    </Finding>
+    <Finding id="2">
+      <Severity>Critical</Severity>
+      <ResourceType>NSG</ResourceType>
+      <ResourceID>docker-nsg</ResourceID>
+      <CheckName>NSG Exposes Docker-API(2375) to Internet: docker-nsg</CheckName>
+      <Description>Docker API port 2375 exposed to Internet. Full host compromise possible.</Description>
+      <Recommendation>Close port 2375 immediately.</Recommendation>
+      <Compliance>CIS Azure v2.0 §6.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:53.217442+00:00</DetectedAt>
+    </Finding>
+    <Finding id="3">
+      <Severity>High</Severity>
+      <ResourceType>IAM</ResourceType>
+      <ResourceID>assignment/owner-principal-abc123</ResourceID>
+      <CheckName>Owner Role Assigned: owner-principal-abc123</CheckName>
+      <Description>Principal 'owner-principal-abc123' has Owner role on the subscription. Owner can modify all security controls.</Description>
+      <Recommendation>Replace Owner with least-privilege roles (Contributor/Reader).</Recommendation>
+      <Compliance>CIS Azure v2.0 §1.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:50.596976+00:00</DetectedAt>
+    </Finding>
+    <Finding id="4">
+      <Severity>High</Severity>
+      <ResourceType>Storage</ResourceType>
+      <ResourceID>prodstorageacct</ResourceID>
+      <CheckName>Storage Public Blob Access Enabled: prodstorageacct</CheckName>
+      <Description>Storage account 'prodstorageacct' allows anonymous public blob access. Sensitive containers may be exposed.</Description>
+      <Recommendation>Set allowBlobPublicAccess=false.</Recommendation>
+      <Compliance>CIS Azure v2.0 §3.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:50.969815+00:00</DetectedAt>
+    </Finding>
+    <Finding id="5">
+      <Severity>High</Severity>
+      <ResourceType>Storage</ResourceType>
+      <ResourceID>backupstorage</ResourceID>
+      <CheckName>Storage HTTP Traffic Allowed: backupstorage</CheckName>
+      <Description>Storage account 'backupstorage' allows unencrypted HTTP connections.</Description>
+      <Recommendation>Enable 'Secure transfer required'.</Recommendation>
+      <Compliance>CIS Azure v2.0 §3.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:51.155463+00:00</DetectedAt>
+    </Finding>
+    <Finding id="6">
+      <Severity>High</Severity>
+      <ResourceType>VM</ResourceType>
+      <ResourceID>prod-vm-001</ResourceID>
+      <CheckName>VM OS Disk Not Encrypted: prod-vm-001</CheckName>
+      <Description>VM 'prod-vm-001' OS disk does not have Azure Disk Encryption (ADE). Data at rest is unprotected.</Description>
+      <Recommendation>Enable ADE using Azure Key Vault.</Recommendation>
+      <Compliance>CIS Azure v2.0 §7.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:51.908381+00:00</DetectedAt>
+    </Finding>
+    <Finding id="7">
+      <Severity>High</Severity>
+      <ResourceType>NSG</ResourceType>
+      <ResourceID>mgmt-nsg</ResourceID>
+      <CheckName>NSG Exposes SSH(22) to Internet: mgmt-nsg</CheckName>
+      <Description>NSG 'mgmt-nsg' allows SSH port 22 from Internet. Brute-force target.</Description>
+      <Recommendation>Restrict SSH to known IP ranges or use Azure Bastion.</Recommendation>
+      <Compliance>CIS Azure v2.0 §6.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:52.659638+00:00</DetectedAt>
+    </Finding>
+    <Finding id="8">
+      <Severity>High</Severity>
+      <ResourceType>NSG</ResourceType>
+      <ResourceID>mgmt-nsg</ResourceID>
+      <CheckName>NSG Exposes RDP(3389) to Internet: mgmt-nsg</CheckName>
+      <Description>NSG 'mgmt-nsg' allows RDP port 3389 from Internet. Major attack vector.</Description>
+      <Recommendation>Close RDP or restrict to known IPs. Use Azure Bastion instead.</Recommendation>
+      <Compliance>CIS Azure v2.0 §6.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:52.843631+00:00</DetectedAt>
+    </Finding>
+    <Finding id="9">
+      <Severity>High</Severity>
+      <ResourceType>KeyVault</ResourceType>
+      <ResourceID>prod-keyvault</ResourceID>
+      <CheckName>Key Vault Soft Delete Disabled: prod-keyvault</CheckName>
+      <Description>Key Vault 'prod-keyvault' has no soft delete. Deleted secrets are unrecoverable.</Description>
+      <Recommendation>Enable soft delete with 90-day retention.</Recommendation>
+      <Compliance>CIS Azure v2.0 §8.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:53.409484+00:00</DetectedAt>
+    </Finding>
+    <Finding id="10">
+      <Severity>High</Severity>
+      <ResourceType>KeyVault</ResourceType>
+      <ResourceID>app-keyvault</ResourceID>
+      <CheckName>Key Vault Purge Protection Disabled: app-keyvault</CheckName>
+      <Description>Key Vault 'app-keyvault' can be permanently purged. No recovery possible.</Description>
+      <Recommendation>Enable purge protection.</Recommendation>
+      <Compliance>CIS Azure v2.0 §8.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:53.59523+00:00</DetectedAt>
+    </Finding>
+    <Finding id="11">
+      <Severity>High</Severity>
+      <ResourceType>KeyVault</ResourceType>
+      <ResourceID>secrets-vault</ResourceID>
+      <CheckName>Key Vault All Permissions Granted: secrets-vault</CheckName>
+      <Description>Key Vault 'secrets-vault' grants ALL permissions to a service principal.</Description>
+      <Recommendation>Restrict access policies to minimum required permissions.</Recommendation>
+      <Compliance>NIST: PR.AC-1 | ISO: A.9 | PCI: 7.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:54.026801+00:00</DetectedAt>
+    </Finding>
+    <Finding id="12">
+      <Severity>High</Severity>
+      <ResourceType>SQL</ResourceType>
+      <ResourceID>prod-sql-server/user-db</ResourceID>
+      <CheckName>SQL TDE Disabled: user-db</CheckName>
+      <Description>Azure SQL database 'user-db' has Transparent Data Encryption disabled. Data at rest is unencrypted.</Description>
+      <Recommendation>Enable TDE on the database.</Recommendation>
+      <Compliance>CIS Azure v2.0 §4.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:54.246899+00:00</DetectedAt>
+    </Finding>
+    <Finding id="13">
+      <Severity>High</Severity>
+      <ResourceType>SQL</ResourceType>
+      <ResourceID>prod-sql-server</ResourceID>
+      <CheckName>SQL Auditing Disabled: prod-sql-server</CheckName>
+      <Description>SQL Server 'prod-sql-server' auditing is disabled. No database activity log.</Description>
+      <Recommendation>Enable SQL Server Auditing with 90+ day retention.</Recommendation>
+      <Compliance>CIS Azure v2.0 §4.3</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:54.427117+00:00</DetectedAt>
+    </Finding>
+    <Finding id="14">
+      <Severity>High</Severity>
+      <ResourceType>SQL</ResourceType>
+      <ResourceID>dev-sql-server</ResourceID>
+      <CheckName>SQL Server Public Access Enabled: dev-sql-server</CheckName>
+      <Description>SQL Server 'dev-sql-server' is accessible from public Internet.</Description>
+      <Recommendation>Disable public network access. Use Private Endpoint.</Recommendation>
+      <Compliance>CIS Azure v2.0 §4.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:54.80227+00:00</DetectedAt>
+    </Finding>
+    <Finding id="15">
+      <Severity>High</Severity>
+      <ResourceType>Monitor</ResourceType>
+      <ResourceID>subscription</ResourceID>
+      <CheckName>No Subscription Diagnostic Settings</CheckName>
+      <Description>No diagnostic settings found. Admin operations not being logged.</Description>
+      <Recommendation>Create diagnostic setting to export Activity Logs to Log Analytics.</Recommendation>
+      <Compliance>CIS Azure v2.0 §5.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:54.997615+00:00</DetectedAt>
+    </Finding>
+    <Finding id="16">
+      <Severity>Medium</Severity>
+      <ResourceType>IAM</ResourceType>
+      <ResourceID>subscription</ResourceID>
+      <CheckName>Too Many Subscription Owners</CheckName>
+      <Description>5 Owner role assignments found. CIS recommends max 3.</Description>
+      <Recommendation>Reduce Owners to 2-3. Use PIM for JIT privileged access.</Recommendation>
+      <Compliance>CIS Azure v2.0 §1.3</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:50.782269+00:00</DetectedAt>
+    </Finding>
+    <Finding id="17">
+      <Severity>Medium</Severity>
+      <ResourceType>Storage</ResourceType>
+      <ResourceID>logstorage</ResourceID>
+      <CheckName>Storage Minimum TLS Not 1.2: logstorage</CheckName>
+      <Description>Storage account 'logstorage' minimum TLS is TLS1_0. Deprecated protocol.</Description>
+      <Recommendation>Set minimumTlsVersion to TLS1_2.</Recommendation>
+      <Compliance>CIS Azure v2.0 §3.2</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:51.347818+00:00</DetectedAt>
+    </Finding>
+    <Finding id="18">
+      <Severity>Medium</Severity>
+      <ResourceType>Storage</ResourceType>
+      <ResourceID>devstorageacct</ResourceID>
+      <CheckName>Storage Soft Delete Disabled: devstorageacct</CheckName>
+      <Description>Blob soft delete disabled. Accidental deletions are unrecoverable.</Description>
+      <Recommendation>Enable soft delete with 7-day retention.</Recommendation>
+      <Compliance>CIS Azure v2.0 §3.2</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:51.531004+00:00</DetectedAt>
+    </Finding>
+    <Finding id="19">
+      <Severity>Medium</Severity>
+      <ResourceType>Storage</ResourceType>
+      <ResourceID>appstorageacct</ResourceID>
+      <CheckName>Storage Allows All Network Traffic: appstorageacct</CheckName>
+      <Description>Network rules default to Allow. All IPs can reach the storage account.</Description>
+      <Recommendation>Set defaultAction=Deny and whitelist specific VNets.</Recommendation>
+      <Compliance>CIS Azure v2.0 §3.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:51.720177+00:00</DetectedAt>
+    </Finding>
+    <Finding id="20">
+      <Severity>Medium</Severity>
+      <ResourceType>VM</ResourceType>
+      <ResourceID>dev-vm-002</ResourceID>
+      <CheckName>VM Uses Unmanaged Disk: dev-vm-002</CheckName>
+      <Description>VM 'dev-vm-002' uses unmanaged OS disk. Not covered by managed backup.</Description>
+      <Recommendation>Migrate to Managed Disks.</Recommendation>
+      <Compliance>CIS Azure v2.0 §7.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:52.093997+00:00</DetectedAt>
+    </Finding>
+    <Finding id="21">
+      <Severity>Medium</Severity>
+      <ResourceType>NSG</ResourceType>
+      <ResourceID>db-nsg</ResourceID>
+      <CheckName>NSG Exposes MSSQL(1433) to Internet: db-nsg</CheckName>
+      <Description>NSG 'db-nsg' exposes MSSQL port 1433 to Internet. Database at risk.</Description>
+      <Recommendation>Move SQL to private subnet with no internet access.</Recommendation>
+      <Compliance>CIS Azure v2.0 §6.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:53.03146+00:00</DetectedAt>
+    </Finding>
+    <Finding id="22">
+      <Severity>Medium</Severity>
+      <ResourceType>KeyVault</ResourceType>
+      <ResourceID>dev-keyvault</ResourceID>
+      <CheckName>Key Vault Public Network Access: dev-keyvault</CheckName>
+      <Description>Key Vault 'dev-keyvault' accessible from all networks. Attack surface exposed.</Description>
+      <Recommendation>Restrict to VNet or use Private Endpoint.</Recommendation>
+      <Compliance>CIS Azure v2.0 §8.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:53.788515+00:00</DetectedAt>
+    </Finding>
+    <Finding id="23">
+      <Severity>Medium</Severity>
+      <ResourceType>SQL</ResourceType>
+      <ResourceID>prod-sql-server</ResourceID>
+      <CheckName>SQL Advanced Threat Protection Disabled: prod-sql-server</CheckName>
+      <Description>Advanced Threat Protection not enabled. SQL injection attacks go undetected.</Description>
+      <Recommendation>Enable Microsoft Defender for SQL.</Recommendation>
+      <Compliance>MS Cloud Well-Arch: Security</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:54.614605+00:00</DetectedAt>
+    </Finding>
+    <Finding id="24">
+      <Severity>Medium</Severity>
+      <ResourceType>Monitor</ResourceType>
+      <ResourceID>subscription</ResourceID>
+      <CheckName>No Activity Log Alerts Configured</CheckName>
+      <Description>No activity log alerts. Security-critical events trigger no notifications.</Description>
+      <Recommendation>Create activity log alerts for NSG changes, policy assignments, etc.</Recommendation>
+      <Compliance>CIS Azure v2.0 §5.1</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:55.181981+00:00</DetectedAt>
+    </Finding>
+    <Finding id="25">
+      <Severity>Low</Severity>
+      <ResourceType>VM</ResourceType>
+      <ResourceID>worker-vm-003</ResourceID>
+      <CheckName>VM Boot Diagnostics Disabled: worker-vm-003</CheckName>
+      <Description>Boot diagnostics disabled. VM startup issues cannot be diagnosed.</Description>
+      <Recommendation>Enable boot diagnostics to a storage account.</Recommendation>
+      <Compliance>MS Cloud Well-Arch: Security</Compliance>
+      <Status>open</Status>
+      <DetectedAt>2026-05-11T02:58:52.282076+00:00</DetectedAt>
+    </Finding>
+  </Findings>
+</SecurityReport>

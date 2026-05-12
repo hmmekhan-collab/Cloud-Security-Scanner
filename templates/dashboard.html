@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — CSA{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block topbar_actions %}
+<a href="{{ url_for('scan') }}" class="btn btn-primary">⊙ New Scan</a>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Row -->
+<div class="grid grid-4 mb-2">
+  <div class="card stat-card">
+    <div class="stat-icon">⊙</div>
+    <div class="stat-value text-accent">{{ total_scans }}</div>
+    <div class="stat-label">Total Scans</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-icon">⚠</div>
+    <div class="stat-value" style="color:#f85149;">{{ critical_count }}</div>
+    <div class="stat-label">High Findings</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-icon">⊡</div>
+    <div class="stat-value" style="color:#d29922;">{{ medium_count }}</div>
+    <div class="stat-label">Medium Findings</div>
+  </div>
+  <div class="card stat-card">
+    <div class="stat-icon">⊞</div>
+    <div class="stat-value text-success">{{ accounts|length }}</div>
+    <div class="stat-label">Cloud Accounts</div>
+  </div>
+</div>
+
+<div class="grid grid-2 mt-2">
+  <!-- Recent Scans -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Recent Scans</span>
+      <a href="{{ url_for('scans') }}" class="btn btn-outline btn-sm">View All</a>
+    </div>
+    {% if recent_scans %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Provider</th>
+          <th>Findings</th>
+          <th>Score</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in recent_scans %}
+        <tr>
+          <td><a href="{{ url_for('scan_results', scan_id=s.id) }}" style="color:var(--accent);text-decoration:none;">{{
+              s.scan_name or 'Scan #'+s.id|string }}</a><br>
+            <span class="text-muted" style="font-size:11px;">{{ s.created_at|format_date('%b %d, %H:%M') }}</span>
+          </td>
+          <td><span class="badge badge-info">{{ (s.provider or 'AWS')|upper }}</span></td>
+          <td>
+            {% if s.high_count %}<span class="badge badge-high">{{ s.high_count }}H</span> {% endif %}
+            {% if s.medium_count %}<span class="badge badge-medium">{{ s.medium_count }}M</span> {% endif %}
+            {% if s.low_count %}<span class="badge badge-low">{{ s.low_count }}L</span> {% endif %}
+            {% if not s.total_findings %}<span class="text-muted">—</span>{% endif %}
+          </td>
+          <td>
+            {% set score = s.risk_score %}
+            <span
+              style="color:{% if score >= 70 %}#3fb950{% elif score >= 40 %}#d29922{% else %}#f85149{% endif %}; font-weight:600;">{{
+              score }}/100</span>
+          </td>
+          <td>
+            {% if s.status == 'completed' %}<span class="badge badge-success">✓ Done</span>
+            {% elif s.status == 'running' %}<span class="badge badge-info">⟳ Running</span>
+            {% elif s.status == 'failed' %}<span class="badge" style="background:rgba(248,81,73,.15);color:#f85149;">✗
+              Failed</span>
+            {% else %}<span class="badge badge-muted">{{ s.status }}</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="icon">⊙</div>
+      <strong>No scans yet</strong>
+      <p>Run your first scan to see results here</p>
+      <a href="{{ url_for('scan') }}" class="btn btn-primary mt-1">Start Scanning</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Cloud Accounts + Recent Reports -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Cloud Accounts</span>
+        <a href="{{ url_for('add_account') }}" class="btn btn-success btn-sm">+ Add</a>
+      </div>
+      {% if accounts %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Alias</th>
+            <th>Provider</th>
+            <th>Region</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in accounts %}
+          <tr>
+            <td><strong>{{ a.alias }}</strong></td>
+            <td><span class="badge badge-info">{{ a.provider|upper }}</span></td>
+            <td><span class="mono">{{ a.region }}</span></td>
+            <td><span class="badge badge-success">● Active</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state" style="padding:24px;">
+        <div class="icon">⊞</div>
+        <strong>No accounts connected</strong>
+        <p>Add your AWS account to begin</p>
+        <a href="{{ url_for('add_account') }}" class="btn btn-success mt-1" style="margin-top:8px;">Connect AWS</a>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Recent Reports</span>
+        <a href="{{ url_for('reports') }}" class="btn btn-outline btn-sm">All Reports</a>
+      </div>
+      {% if recent_reports %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Report</th>
+            <th>Format</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in recent_reports %}
+          <tr>
+            <td style="font-size:12px;">{{ r.report_name[:35] }}{% if r.report_name|length > 35 %}...{% endif %}</td>
+            <td><span class="badge badge-info">{{ r.format|upper }}</span></td>
+            <td style="font-size:11px;color:var(--muted);">{{ r.created_at|format_date('%b %d') }}</td>
+            <td><a href="{{ url_for('download_report', rid=r.id) }}" class="btn btn-outline btn-sm">↓</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state" style="padding:20px;">
+        <p>No reports generated yet</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Animated number counter for stat values
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.stat-value').forEach(function (el) {
+      var text = el.textContent.trim();
+      var match = text.match(/^(\d+)/);
+      if (!match) return;
+      var target = parseInt(match[1]);
+      var suffix = text.replace(/^\d+/, '');
+      if (target === 0) return;
+      var duration = 800;
+      var start = performance.now();
+      el.textContent = '0' + suffix;
+      function animate(now) {
+        var progress = Math.min((now - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+        var current = Math.round(target * eased);
+        el.textContent = current + suffix;
+        if (progress < 1) requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+    });
+  });
+</script>
+{% endblock %}

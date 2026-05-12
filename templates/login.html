@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Cloud Security Analyzer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .left-panel {
+      flex: 1;
+      background: linear-gradient(135deg, #0d1117 0%, #0f3460 50%, #1a1a2e 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated grid lines in background */
+    .left-panel .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(88, 166, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(88, 166, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridMove 20s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridMove {
+      from {
+        transform: translate(0, 0);
+      }
+
+      to {
+        transform: translate(50px, 50px);
+      }
+    }
+
+    /* Floating particle dots */
+    .login-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .login-particles .p {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(88, 166, 255, 0.3);
+      animation: loginFloat 8s ease-in-out infinite;
+    }
+
+    @keyframes loginFloat {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.15;
+      }
+
+      50% {
+        transform: translateY(-60px) scale(1.2);
+        opacity: 0.5;
+      }
+    }
+
+    /* Animated shield icon */
+    .brand-logo {
+      animation: shieldPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes shieldPulse {
+
+      0%,
+      100% {
+        text-shadow: 0 0 10px rgba(88, 166, 255, 0.3);
+      }
+
+      50% {
+        text-shadow: 0 0 25px rgba(88, 166, 255, 0.6), 0 0 50px rgba(88, 166, 255, 0.2);
+      }
+    }
+
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(88, 166, 255, .15) 0%, transparent 70%);
+    }
+
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      left: -80px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(63, 185, 80, .1) 0%, transparent 70%);
+    }
+
+    .brand-logo {
+      font-size: 42px;
+      margin-bottom: 16px;
+    }
+
+    .brand-name {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .brand-name span {
+      color: #58a6ff;
+    }
+
+    .brand-tagline {
+      font-size: 15px;
+      color: #8b949e;
+      max-width: 360px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .feature-list {
+      list-style: none;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #8b949e;
+      margin-bottom: 10px;
+    }
+
+    .feature-list li span {
+      color: #3fb950;
+      font-size: 16px;
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .badge-chip {
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      color: #8b949e;
+    }
+
+    .right-panel {
+      width: 420px;
+      background: #161b22;
+      border-left: 1px solid #30363d;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 40px;
+    }
+
+    /* Form entrance animation */
+    .right-panel>* {
+      animation: formSlideIn .5s ease-out forwards;
+      opacity: 0;
+    }
+
+    .right-panel>*:nth-child(1) {
+      animation-delay: .1s;
+    }
+
+    .right-panel>*:nth-child(2) {
+      animation-delay: .2s;
+    }
+
+    .right-panel>*:nth-child(3) {
+      animation-delay: .3s;
+    }
+
+    .right-panel>*:nth-child(4) {
+      animation-delay: .4s;
+    }
+
+    .right-panel>*:nth-child(5) {
+      animation-delay: .5s;
+    }
+
+    .right-panel>*:nth-child(6) {
+      animation-delay: .6s;
+    }
+
+    @keyframes formSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Login button glow */
+    .btn-login {
+      transition: all .2s ease, box-shadow .2s ease;
+    }
+
+    .btn-login:hover {
+      box-shadow: 0 4px 20px rgba(31, 111, 235, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-login:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    /* Input focus glow */
+    .form-control:focus {
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+    }
+
+    /* Feature list item entrance */
+    .feature-list li {
+      opacity: 0;
+      animation: featureIn .4s ease-out forwards;
+    }
+
+    .feature-list li:nth-child(1) {
+      animation-delay: .3s;
+    }
+
+    .feature-list li:nth-child(2) {
+      animation-delay: .4s;
+    }
+
+    .feature-list li:nth-child(3) {
+      animation-delay: .5s;
+    }
+
+    .feature-list li:nth-child(4) {
+      animation-delay: .6s;
+    }
+
+    .feature-list li:nth-child(5) {
+      animation-delay: .7s;
+    }
+
+    @keyframes featureIn {
+      from {
+        opacity: 0;
+        transform: translateX(-16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Badge chips hover */
+    .badge-chip {
+      transition: all .2s ease;
+      cursor: default;
+    }
+
+    .badge-chip:hover {
+      background: rgba(88, 166, 255, 0.12);
+      border-color: rgba(88, 166, 255, 0.3);
+      color: #58a6ff;
+      transform: translateY(-1px);
+    }
+
+    .form-header {
+      margin-bottom: 28px;
+    }
+
+    .form-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .form-header p {
+      font-size: 13px;
+      color: #8b949e;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #e6edf3;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      transition: border-color .15s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #58a6ff;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 10px;
+      background: #1f6feb;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+      font-family: 'Inter', sans-serif;
+      margin-top: 4px;
+    }
+
+    .btn-login:hover {
+      background: #388bfd;
+    }
+
+    .divider {
+      text-align: center;
+      color: #8b949e;
+      font-size: 12px;
+      margin: 16px 0;
+      position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: #30363d;
+    }
+
+    .divider::before {
+      left: 0;
+    }
+
+    .divider::after {
+      right: 0;
+    }
+
+    .link-row {
+      text-align: center;
+      font-size: 12px;
+      color: #8b949e;
+    }
+
+    .link-row a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    .demo-box {
+      background: rgba(88, 166, 255, .08);
+      border: 1px solid rgba(88, 166, 255, .2);
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      font-size: 12px;
+    }
+
+    .demo-box .title {
+      color: #58a6ff;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .demo-box .creds {
+      color: #8b949e;
+      font-family: monospace;
+    }
+
+    .alert {
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert-danger {
+      background: rgba(248, 81, 73, .12);
+      border: 1px solid rgba(248, 81, 73, .3);
+      color: #f85149;
+    }
+
+    .alert-success {
+      background: rgba(63, 185, 80, .12);
+      border: 1px solid rgba(63, 185, 80, .3);
+      color: #3fb950;
+    }
+
+    .alert-info {
+      background: rgba(88, 166, 255, .12);
+      border: 1px solid rgba(88, 166, 255, .3);
+      color: #58a6ff;
+    }
+
+    .footer-note {
+      font-size: 11px;
+      color: #484f58;
+      text-align: center;
+      margin-top: 28px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="left-panel">
+    <div class="grid-bg"></div>
+    <div class="login-particles" id="login-particles"></div>
+    <div class="brand-logo">🛡</div>
+    <div class="brand-name">Cloud Security <span>Analyzer</span></div>
+    <p class="brand-tagline">Automated cloud security auditing platform for AWS & Azure. Detect misconfigurations before
+      attackers do.</p>
+    <ul class="feature-list">
+      <li><span>✓</span> Rule-based security analysis (CIS Benchmarks)</li>
+      <li><span>✓</span> AWS IAM, S3, EC2, RDS, CloudTrail checks</li>
+      <li><span>✓</span> Severity-based risk scoring</li>
+      <li><span>✓</span> Reports in PDF, CSV, JSON & HTML</li>
+      <li><span>✓</span> Multi-account & multi-cloud support</li>
+    </ul>
+    <div class="badges">
+      <span class="badge-chip">AWS</span>
+      <span class="badge-chip">Azure</span>
+      <span class="badge-chip">CIS Benchmark</span>
+      <span class="badge-chip">University of Wah FYP</span>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="form-header">
+      <h2>Welcome back</h2>
+      <p>Sign in to your CSA account</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}{% for cat, msg in messages %}
+    <div class="alert alert-{{ cat }}">{{ msg }}</div>
+    {% endfor %}{% endif %}
+    {% endwith %}
+
+
+
+    <form method="POST">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-control" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Your password" required>
+      </div>
+      <button type="submit" class="btn-login">Sign In →</button>
+    </form>
+
+    <div class="divider">or</div>
+    <div class="link-row">
+      Don't have an account? <a href="{{ url_for('register') }}">Create one</a>
+    </div>
+    <div class="footer-note">Cloud Security Analyzer (CSA) &nbsp;·&nbsp; University of Wah &nbsp;·&nbsp; 2025</div>
+  </div>
+
+  <script>
+    // Generate floating particles
+    var pc = document.getElementById('login-particles');
+    if (pc) {
+      for (var i = 0; i < 20; i++) {
+        var d = document.createElement('div');
+        d.className = 'p';
+        var size = 2 + Math.random() * 4;
+        d.style.width = size + 'px';
+        d.style.height = size + 'px';
+        d.style.left = Math.random() * 100 + '%';
+        d.style.top = Math.random() * 100 + '%';
+        d.style.animationDelay = (Math.random() * 8) + 's';
+        d.style.animationDuration = (6 + Math.random() * 6) + 's';
+        pc.appendChild(d);
+      }
+    }
+  </script>
+</body>
+
+</html>

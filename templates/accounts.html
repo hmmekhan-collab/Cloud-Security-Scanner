@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Cloud Accounts — CSA{% endblock %}
+{% block page_title %}Cloud Accounts{% endblock %}
+{% block topbar_actions %}
+<a href="{{ url_for('add_account') }}" class="btn btn-success">+ Add Account</a>
+{% endblock %}
+{% block content %}
+{% if accounts %}
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Alias</th>
+        <th>Provider</th>
+        <th>Region</th>
+        <th>Access Key</th>
+        <th>Status</th>
+        <th>Added</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in accounts %}
+      <tr>
+        <td><strong>{{ a.alias }}</strong></td>
+        <td><span class="badge badge-info">{{ a.provider|upper }}</span></td>
+        <td><span class="mono">{{ a.region }}</span></td>
+        <td><span class="mono text-muted">{{ a.access_key[:8] }}••••••••</span></td>
+        <td><span class="badge badge-success">● Active</span></td>
+        <td class="text-muted" style="font-size:12px;">{{ a.created_at|format_date('%b %d, %Y') }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('delete_account', aid=a.id) }}" style="display:inline;"
+            onsubmit="return confirm('Remove this account?')">
+            <button type="submit" class="btn btn-danger btn-sm">✗ Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card card-body empty-state" style="padding:50px;">
+  <div class="icon">⊞</div>
+  <strong>No Cloud Accounts</strong>
+  <p>Connect your AWS account to start scanning</p>
+  <a href="{{ url_for('add_account') }}" class="btn btn-success mt-2">+ Add AWS Account</a>
+</div>
+{% endif %}
+{% endblock %}

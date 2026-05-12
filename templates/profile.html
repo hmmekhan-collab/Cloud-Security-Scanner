@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Profile — CSA{% endblock %}
+{% block page_title %}Profile Settings{% endblock %}
+{% block content %}
+<div style="max-width:560px;">
+  <form method="POST">
+    <div class="card mb-2">
+      <div class="card-header"><span class="card-title">Personal Information</span></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" name="full_name" class="form-control" value="{{ user.full_name }}" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" value="{{ user.email }}" disabled style="opacity:.6;">
+          <div class="form-hint">Email cannot be changed</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Organization</label>
+          <input type="text" name="organization" class="form-control" value="{{ user.organization or '' }}" placeholder="Your organization">
+        </div>
+      </div>
+    </div>
+    <div class="card mb-2">
+      <div class="card-header"><span class="card-title">Change Password</span></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Current Password</label>
+          <input type="password" name="current_password" class="form-control" placeholder="Leave blank to keep current">
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <input type="password" name="new_password" class="form-control" placeholder="New password">
+        </div>
+      </div>
+    </div>
+    <div class="card mb-2">
+      <div class="card-header"><span class="card-title">Account Info</span></div>
+      <div class="card-body">
+        <table style="width:100%;font-size:13px;">
+          <tr><td class="text-muted" style="padding:4px 0;width:160px;">Role</td><td><span class="badge badge-info">{{ user.role|capitalize }}</span></td></tr>
+          <tr><td class="text-muted" style="padding:4px 0;">Member Since</td><td>{{ user.created_at|format_date('%b %d, %Y') }}</td></tr>
+          <tr><td class="text-muted" style="padding:4px 0;">Last Login</td><td>{{ user.last_login|format_date('%Y-%m-%d %H:%M') if user.last_login else 'N/A' }}</td></tr>
+        </table>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" style="padding:10px 24px;">Save Changes</button>
+  </form>
+</div>
+{% endblock %}

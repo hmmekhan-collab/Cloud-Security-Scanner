@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+{% block title %}Scan Results — CSA{% endblock %}
+{% block page_title %}Scan Results{% endblock %}
+{% block topbar_actions %}
+<a href="{{ url_for('scans') }}" class="btn btn-outline btn-sm">← Back</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .grade-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 900;
+    flex-shrink: 0;
+    border: 3px solid currentColor;
+  }
+
+  .sev-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .3px;
+  }
+
+  .sev-Critical {
+    background: rgba(188, 40, 40, .18);
+    color: #ff6b6b;
+    border: 1px solid rgba(188, 40, 40, .35);
+  }
+
+  .sev-High {
+    background: rgba(248, 81, 73, .15);
+    color: #f85149;
+    border: 1px solid rgba(248, 81, 73, .3);
+  }
+
+  .sev-Medium {
+    background: rgba(210, 153, 34, .15);
+    color: #d29922;
+    border: 1px solid rgba(210, 153, 34, .3);
+  }
+
+  .sev-Low {
+    background: rgba(63, 185, 80, .15);
+    color: #3fb950;
+    border: 1px solid rgba(63, 185, 80, .3);
+  }
+
+  .finding-row {
+    border-bottom: 1px solid #21262d;
+    padding: 14px 18px;
+    transition: background .1s;
+  }
+
+  .finding-row:hover {
+    background: rgba(255, 255, 255, .02);
+  }
+
+  .finding-row:last-child {
+    border-bottom: none;
+  }
+
+  .comp-pill {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-family: monospace;
+    background: rgba(88, 166, 255, .1);
+    color: #58a6ff;
+    border: 1px solid rgba(88, 166, 255, .2);
+    margin: 1px;
+  }
+
+  .escalated-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    background: rgba(188, 140, 255, .15);
+    color: #bc8cff;
+    border: 1px solid rgba(188, 140, 255, .3);
+  }
+
+  .plan-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #21262d;
+    font-size: 13px;
+  }
+
+  .plan-row:last-child {
+    border-bottom: none;
+  }
+
+  .plan-timeline {
+    font-size: 11px;
+    color: #8b949e;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 190px;
+  }
+
+  .filter-btn {
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #30363d;
+    background: transparent;
+    color: #8b949e;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+  }
+
+  .filter-btn.active,
+  .filter-btn:hover {
+    border-color: #58a6ff;
+    color: #58a6ff;
+    background: rgba(88, 166, 255, .1);
+  }
+
+  /* Finding row entrance animation */
+  .finding-row {
+    opacity: 0;
+    animation: findingIn .4s ease-out forwards;
+  }
+
+  @keyframes findingIn {
+    from {
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Grade circle glow animation */
+  .grade-circle {
+    animation: gradeGlow 2.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes gradeGlow {
+    from {
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    to {
+      box-shadow: 0 0 20px currentColor, 0 0 40px rgba(88, 166, 255, 0.1);
+    }
+  }
+
+  /* Service box hover */
+  [onclick^="filterType"] {
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease !important;
+  }
+
+  [onclick^="filterType"]:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── Top Summary Row ── -->
+<div class="grid grid-4 mb-2">
+  {% set score = scan.risk_score or 0 %}
+  {% set grade = scan.get('risk_grade','?') if scan is mapping else '?' %}
+  {% set score_color = '#3fb950' if score >= 80 else ('#58a6ff' if score >= 70 else ('#d29922' if score >= 50 else
+  '#f85149')) %}
+
+  <div class="card stat-card" style="border-top:3px solid {{ score_color }};">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="grade-circle" style="color:{{ score_color }};border-color:{{ score_color }};">{{ grade }}</div>
+      <div>
+        <div class="stat-value" style="color:{{ score_color }};">{{ score }}<span style="font-size:14px;">/100</span>
+        </div>
+        <div class="stat-label">Risk Score</div>
+      </div>
+    </div>
+    <div class="progress mt-1">
+      <div class="progress-bar" style="width:{{ score }}%;background:{{ score_color }};"></div>
+    </div>
+  </div>
+
+  {% set crit = scan.critical_count if scan is mapping and scan.get('critical_count') else 0 %}
+  <div class="card stat-card" style="border-top:3px solid #ff6b6b;">
+    <div class="stat-icon" style="color:#ff6b6b;">💀</div>
+    <div class="stat-value" style="color:#ff6b6b;">{{ crit }}</div>
+    <div class="stat-label">Critical</div>
+  </div>
+  <div class="card stat-card" style="border-top:3px solid #f85149;">
+    <div class="stat-icon" style="color:#f85149;">⚠</div>
+    <div class="stat-value" style="color:#f85149;">{{ scan.high_count or 0 }}</div>
+    <div class="stat-label">High</div>
+  </div>
+  <div class="card stat-card" style="border-top:3px solid #d29922;">
+    <div class="stat-icon" style="color:#d29922;">◎</div>
+    <div class="stat-value" style="color:#d29922;">{{ (scan.medium_count or 0) }}</div>
+    <div class="stat-label">Medium / <span style="color:#3fb950;">{{ scan.low_count or 0 }}</span> Low</div>
+  </div>
+</div>
+
+<!-- ── Meta + Report Generator ── -->
+<div class="grid grid-2 mb-2">
+  <div class="card">
+    <div class="card-header"><span class="card-title">Scan Information</span></div>
+    <div class="card-body">
+      <table style="width:100%;font-size:13px;border-collapse:collapse;">
+        {% for label, val in [
+        ('Scan Name', scan.scan_name),
+        ('Provider', (scan.provider or 'AWS')|upper),
+        ('Started', scan.created_at[:16] if scan.created_at else '—'),
+        ('Completed', scan.completed_at[:16] if scan.completed_at else '—'),
+        ('Categories',scan.categories or 'All'),
+        ('Total Findings', scan.total_findings|string),
+        ] %}
+        <tr>
+          <td style="color:var(--muted);padding:5px 0;width:130px;">{{ label }}</td>
+          <td style="font-weight:500;">{{ val }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">Export Report</span></div>
+    <div class="card-body">
+      <p class="text-muted mb-2" style="font-size:12px;">All findings, remediation plan and compliance data included:
+      </p>
+      <form method="POST" action="{{ url_for('generate_report_route', scan_id=scan.id) }}">
+        <div class="form-group">
+          <label class="form-label">Format</label>
+          <select name="format" class="form-control form-select">
+            <option value="pdf">📄 PDF — Professional report with remediation plan</option>
+            <option value="csv">📊 CSV — Spreadsheet / Excel</option>
+            <option value="json">{ } JSON — Machine-readable</option>
+            <option value="html">🌐 HTML — Standalone web report</option>
+            <option value="xml">📝 XML — Structured data exchange</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">⊡ Generate Report</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ── By Service ── -->
+{% if by_type %}
+<div class="card mb-2">
+  <div class="card-header"><span class="card-title">Findings by Service</span></div>
+  <div class="card-body" style="display:flex;gap:10px;flex-wrap:wrap;">
+    {% for rtype, items in by_type.items() %}
+    {% set has_crit = items|selectattr('severity','equalto','Critical')|list|length %}
+    {% set has_high = items|selectattr('severity','equalto','High')|list|length %}
+    <div onclick="filterType('{{ rtype }}')"
+      style="background:var(--dark3);border:1px solid {% if has_crit %}rgba(255,107,107,.4){% elif has_high %}rgba(248,81,73,.3){% else %}var(--border){% endif %};border-radius:6px;padding:10px 16px;text-align:center;min-width:90px;cursor:pointer;">
+      <div
+        style="font-size:20px;font-weight:700;color:{% if has_crit %}#ff6b6b{% elif has_high %}#f85149{% else %}var(--accent){% endif %};">
+        {{ items|length }}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px;">{{ rtype }}</div>
+    </div>
+    {% endfor %}
+    <div onclick="filterType('all')"
+      style="background:var(--dark3);border:1px solid var(--border);border-radius:6px;padding:10px 16px;text-align:center;min-width:70px;cursor:pointer;opacity:.7;">
+      <div style="font-size:20px;font-weight:700;color:var(--muted);">↺</div>
+      <div style="font-size:11px;color:var(--muted);">Reset</div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Findings List ── -->
+<div class="card mb-2">
+  <div class="card-header">
+    <span class="card-title">All Findings ({{ findings|length }})</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="filter-btn active" onclick="filterSev('all',this)">All</button>
+      <button class="filter-btn" onclick="filterSev('Critical',this)"
+        style="border-color:rgba(255,107,107,.4);color:#ff6b6b;">Critical</button>
+      <button class="filter-btn" onclick="filterSev('High',this)"
+        style="border-color:rgba(248,81,73,.3);color:#f85149;">High</button>
+      <button class="filter-btn" onclick="filterSev('Medium',this)"
+        style="border-color:rgba(210,153,34,.3);color:#d29922;">Medium</button>
+      <button class="filter-btn" onclick="filterSev('Low',this)"
+        style="border-color:rgba(63,185,80,.3);color:#3fb950;">Low</button>
+    </div>
+  </div>
+  {% if findings %}
+  <div id="findings-list">
+    {% for f in findings %}
+    <div class="finding-row" data-sev="{{ f.severity }}" data-type="{{ f.resource_type }}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px;">
+        <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
+          <span class="sev-tag sev-{{ f.severity }}">{{ f.severity }}</span>
+          <span class="badge badge-muted">{{ f.resource_type }}</span>
+          {% if 'ESCALATED' in f.description %}
+          <span class="escalated-badge">⚡ Escalated</span>
+          {% endif %}
+          {% if f.compliance %}
+          {% for tag in f.compliance.split(' | ')[:3] %}
+          <span class="comp-pill">{{ tag }}</span>
+          {% endfor %}
+          {% endif %}
+        </div>
+        <div class="mono text-muted" style="font-size:10px;text-align:right;max-width:200px;word-break:break-all;">{{
+          f.resource_id[:60] }}</div>
+      </div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:5px;">{{ f.check_name }}</div>
+      <div style="font-size:12px;color:#8b949e;margin-bottom:7px;line-height:1.6;">
+        {{ f.description | replace(' ⚡ ESCALATED:', '') | truncate(220) }}
+      </div>
+      <div
+        style="font-size:12px;background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.15);border-radius:4px;padding:6px 10px;">
+        <span style="color:#58a6ff;font-weight:600;">🔧 Fix: </span>{{ f.recommendation }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="icon">✅</div><strong>No findings!</strong>
+    <p>All checks passed.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- ── Remediation Plan ── -->
+{% if remediation_plan %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">🗺 Prioritized Remediation Plan</span>
+    <span class="text-muted" style="font-size:12px;">{{ remediation_plan|length }} actions</span>
+  </div>
+  <div class="card-body" style="padding:8px 18px;">
+    {% for item in remediation_plan %}
+    <div class="plan-row">
+      <span style="font-size:16px;flex-shrink:0;">{{ item.icon }}</span>
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:13px;">{{ item.check }}</div>
+        <div style="color:#8b949e;font-size:12px;margin-top:2px;">{{ item.action }}</div>
+        {% if item.compliance %}
+        <div style="margin-top:4px;">
+          {% for tag in item.compliance.split(' | ')[:2] %}
+          <span class="comp-pill">{{ tag }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <span class="sev-tag sev-{{ item.severity }}">{{ item.severity }}</span>
+        <div class="plan-timeline">{{ item.timeline }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function filterSev(sev, btn) {
+    document.querySelectorAll('.finding-row').forEach(function (r, i) {
+      var show = (sev === 'all' || r.dataset.sev === sev);
+      r.style.display = show ? '' : 'none';
+      if (show) {
+        r.style.animation = 'none';
+        r.offsetHeight; // trigger reflow
+        r.style.animation = 'findingIn .3s ease-out forwards';
+        r.style.animationDelay = (i * 0.03) + 's';
+      }
+    });
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+  }
+  function filterType(type) {
+    document.querySelectorAll('.finding-row').forEach(function (r, i) {
+      var show = (type === 'all' || r.dataset.type === type);
+      r.style.display = show ? '' : 'none';
+      if (show) {
+        r.style.animation = 'none';
+        r.offsetHeight;
+        r.style.animation = 'findingIn .3s ease-out forwards';
+        r.style.animationDelay = (i * 0.03) + 's';
+      }
+    });
+  }
+
+  // Stagger finding rows on load
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.finding-row').forEach(function (r, i) {
+      r.style.animationDelay = (i * 0.04) + 's';
+    });
+
+    // Animate stat numbers
+    document.querySelectorAll('.stat-value').forEach(function (el) {
+      var text = el.textContent.trim();
+      var match = text.match(/^(\d+)/);
+      if (!match) return;
+      var target = parseInt(match[1]);
+      var suffix = text.replace(/^\d+/, '');
+      if (target === 0) return;
+      var duration = 800;
+      var start = performance.now();
+      el.textContent = '0' + suffix;
+      function animate(now) {
+        var progress = Math.min((now - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(target * eased) + suffix;
+        if (progress < 1) requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+    });
+  });
+</script>
+{% endblock %}

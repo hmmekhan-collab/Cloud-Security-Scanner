@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CSA Security Report — Security Audit May 10, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * {box-sizing:border-box;margin:0;padding:0}
+  body {font-family:'Inter',sans-serif;background:#0d1117;color:#e6edf3;min-height:100vh;}
+  .header {background:linear-gradient(135deg,#0d1117 0%,#0f3460 50%,#1a1a2e 100%);padding:40px 48px;position:relative;overflow:hidden;}
+  .header::before {content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(88,166,255,.12),transparent 70%);}
+  .header .shield {font-size:32px;margin-bottom:8px;text-shadow:0 0 20px rgba(88,166,255,.4);}
+  .header h1 {font-size:28px;font-weight:800;margin-bottom:4px;}
+  .header h1 span {color:#58a6ff;}
+  .header p {font-size:13px;color:#8b949e;}
+  .container {max-width:1000px;margin:0 auto;padding:28px 24px;}
+  .card {background:#161b22;border:1px solid #30363d;border-radius:10px;padding:24px;margin-bottom:20px;}
+  .card h2 {font-size:16px;font-weight:700;color:#e6edf3;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #30363d;display:flex;align-items:center;gap:8px;}
+  .kpi-row {display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+  .kpi {background:#161b22;border:1px solid #30363d;border-radius:10px;text-align:center;padding:20px 16px;border-top:3px solid transparent;}
+  .kpi .num {font-size:32px;font-weight:800;line-height:1;}
+  .kpi .lbl {font-size:11px;margin-top:6px;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;}
+  .meta-grid {display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .meta-item {background:#21262d;padding:12px 16px;border-radius:8px;border:1px solid #30363d;}
+  .meta-item label {font-size:10px;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;}
+  .meta-item span {font-size:14px;font-weight:600;color:#e6edf3;}
+  .charts-row {display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .score-badge {display:inline-flex;align-items:center;gap:8px;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid;}
+  code {font-family:'JetBrains Mono',monospace;}
+  footer {text-align:center;color:#484f58;font-size:11px;padding:24px;border-top:1px solid #21262d;margin-top:16px;}
+  footer span {color:#58a6ff;}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="shield">🛡</div>
+  <h1>Cloud Security <span>Analyzer</span></h1>
+  <p>Security Assessment Report &nbsp;|&nbsp; Security Audit May 10, 2026 &nbsp;|&nbsp; 2026-05-11 02:58:50 UTC</p>
+</div>
+<div class="container">
+  <div class="kpi-row">
+    <div class="kpi" style="border-top-color:#ff4040;"><div class="num" style="color:#ff4040;">0</div><div class="lbl">Critical</div></div>
+    <div class="kpi" style="border-top-color:#f85149;"><div class="num" style="color:#f85149;">13</div><div class="lbl">High</div></div>
+    <div class="kpi" style="border-top-color:#d29922;"><div class="num" style="color:#d29922;">9</div><div class="lbl">Medium</div></div>
+    <div class="kpi" style="border-top-color:#3fb950;"><div class="num" style="color:#3fb950;">1</div><div class="lbl">Low</div></div>
+  </div>
+
+  <div class="card">
+    <h2>📊 Severity Analysis</h2>
+    <div class="charts-row">
+      <div style="text-align:center;"><svg width="200" height="220" viewBox="0 0 200 220"><text x="100" y="14" text-anchor="middle" font-size="12" font-weight="600" fill="#e6edf3">Severity Distribution</text><circle cx="100" cy="110" r="75" fill="#21262d"/><path d="M 100.0 35.0 A 75 75 0 1 1 90.6 184.4 L 95.0 149.7 A 40 40 0 1 0 100.0 70.0 Z" fill="#f85149" stroke="#0d1117" stroke-width="2"/><text x="157.4" y="113.6" text-anchor="middle" font-size="9" font-weight="700" fill="white">52%</text><path d="M 90.6 184.4 A 75 75 0 0 1 48.7 55.3 L 72.6 80.8 A 40 40 0 0 0 95.0 149.7 Z" fill="#d29922" stroke="#0d1117" stroke-width="2"/><text x="45.3" y="127.8" text-anchor="middle" font-size="9" font-weight="700" fill="white">36%</text><path d="M 48.7 55.3 A 75 75 0 0 1 63.9 44.3 L 80.7 74.9 A 40 40 0 0 0 72.6 80.8 Z" fill="#3fb950" stroke="#0d1117" stroke-width="2"/><text x="66.2" y="63.5" text-anchor="middle" font-size="9" font-weight="700" fill="white">4%</text><circle cx="100" cy="110" r="40" fill="#161b22"/><text x="100" y="107" text-anchor="middle" font-size="18" font-weight="800" fill="#e6edf3">25</text><text x="100" y="120" text-anchor="middle" font-size="8" fill="#8b949e" letter-spacing="1">FINDINGS</text><rect x="10" y="203" width="10" height="8" fill="#ff4040" rx="2"/><text x="23" y="211" font-size="9" fill="#8b949e">Critical (0)</text><rect x="60" y="203" width="10" height="8" fill="#f85149" rx="2"/><text x="73" y="211" font-size="9" fill="#8b949e">High (13)</text><rect x="110" y="203" width="10" height="8" fill="#d29922" rx="2"/><text x="123" y="211" font-size="9" fill="#8b949e">Medium (9)</text><rect x="160" y="203" width="10" height="8" fill="#3fb950" rx="2"/><text x="173" y="211" font-size="9" fill="#8b949e">Low (1)</text></svg></div>
+      <div style="text-align:center;"><svg width="260" height="220" viewBox="0 0 260 220"><text x="130" y="14" text-anchor="middle" font-size="12" font-weight="600" fill="#e6edf3">Finding Count</text><line x1="30" y1="175" x2="240" y2="175" stroke="#21262d" stroke-width="1"/><text x="26" y="179" text-anchor="end" font-size="8" fill="#484f58">0</text><line x1="30" y1="139" x2="240" y2="139" stroke="#21262d" stroke-width="1"/><text x="26" y="143" text-anchor="end" font-size="8" fill="#484f58">3</text><line x1="30" y1="102" x2="240" y2="102" stroke="#21262d" stroke-width="1"/><text x="26" y="106" text-anchor="end" font-size="8" fill="#484f58">6</text><line x1="30" y1="66" x2="240" y2="66" stroke="#21262d" stroke-width="1"/><text x="26" y="70" text-anchor="end" font-size="8" fill="#484f58">9</text><line x1="30" y1="30" x2="240" y2="30" stroke="#21262d" stroke-width="1"/><text x="26" y="34" text-anchor="end" font-size="8" fill="#484f58">13</text><rect x="42" y="175" width="38" height="0" fill="#ff4040" rx="4" opacity="0.85"/><text x="61" y="170" text-anchor="middle" font-size="11" font-weight="700" fill="#ff4040">0</text><text x="61" y="189" text-anchor="middle" font-size="9" fill="#8b949e">Critical</text><rect x="98" y="30" width="38" height="145" fill="#f85149" rx="4" opacity="0.85"/><text x="117" y="25" text-anchor="middle" font-size="11" font-weight="700" fill="#f85149">13</text><text x="117" y="189" text-anchor="middle" font-size="9" fill="#8b949e">High</text><rect x="154" y="75" width="38" height="100" fill="#d29922" rx="4" opacity="0.85"/><text x="173" y="70" text-anchor="middle" font-size="11" font-weight="700" fill="#d29922">9</text><text x="173" y="189" text-anchor="middle" font-size="9" fill="#8b949e">Medium</text><rect x="210" y="164" width="38" height="11" fill="#3fb950" rx="4" opacity="0.85"/><text x="229" y="159" text-anchor="middle" font-size="11" font-weight="700" fill="#3fb950">1</text><text x="229" y="189" text-anchor="middle" font-size="9" fill="#8b949e">Low</text><line x1="30" y1="30" x2="30" y2="175" stroke="#30363d" stroke-width="1"/><line x1="30" y1="175" x2="240" y2="175" stroke="#30363d" stroke-width="1"/></svg></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Scan Information</h2>
+    <div class="meta-grid">
+      <div class="meta-item"><label>Scan Name</label><span>Security Audit May 10, 2026</span></div>
+      <div class="meta-item"><label>Organization</label><span>University of Wah</span></div>
+      <div class="meta-item"><label>Analyst</label><span>Admin User</span></div>
+      <div class="meta-item"><label>Cloud Provider</label><span>AZURE</span></div>
+      <div class="meta-item"><label>Scan Date</label><span>2026-05-11 02:58:50 UTC</span></div>
+      <div class="meta-item"><label>Risk Score</label><span style="color:#f85149;">16/100</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔍 Detailed Findings (25)</h2>
+    
+        <div style="border-left:3px solid #ff4040;background:rgba(255,64,64,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#1. NSG All Inbound Traffic Open: web-nsg</strong>
+            <span style="background:#ff4040;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Critical</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">NSG / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">web-nsg</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §6.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">NSG 'web-nsg' allows ALL inbound TCP from Internet (0.0.0.0/0). Complete attack surface exposed.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Remove all-traffic rule. Specify only required ports.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #ff4040;background:rgba(255,64,64,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#2. NSG Exposes Docker-API(2375) to Internet: docker-nsg</strong>
+            <span style="background:#ff4040;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Critical</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">NSG / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">docker-nsg</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §6.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Docker API port 2375 exposed to Internet. Full host compromise possible.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Close port 2375 immediately.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#3. Owner Role Assigned: owner-principal-abc123</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">IAM / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">assignment/owner-principal-abc123</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §1.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Principal 'owner-principal-abc123' has Owner role on the subscription. Owner can modify all security controls.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Replace Owner with least-privilege roles (Contributor/Reader).</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#4. Storage Public Blob Access Enabled: prodstorageacct</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">Storage / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">prodstorageacct</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §3.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Storage account 'prodstorageacct' allows anonymous public blob access. Sensitive containers may be exposed.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Set allowBlobPublicAccess=false.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#5. Storage HTTP Traffic Allowed: backupstorage</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">Storage / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">backupstorage</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §3.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Storage account 'backupstorage' allows unencrypted HTTP connections.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Enable 'Secure transfer required'.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#6. VM OS Disk Not Encrypted: prod-vm-001</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">VM / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">prod-vm-001</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §7.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">VM 'prod-vm-001' OS disk does not have Azure Disk Encryption (ADE). Data at rest is unprotected.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Enable ADE using Azure Key Vault.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#7. NSG Exposes SSH(22) to Internet: mgmt-nsg</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">NSG / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">mgmt-nsg</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §6.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">NSG 'mgmt-nsg' allows SSH port 22 from Internet. Brute-force target.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Restrict SSH to known IP ranges or use Azure Bastion.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#8. NSG Exposes RDP(3389) to Internet: mgmt-nsg</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">NSG / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">mgmt-nsg</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §6.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">NSG 'mgmt-nsg' allows RDP port 3389 from Internet. Major attack vector.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Close RDP or restrict to known IPs. Use Azure Bastion instead.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#9. Key Vault Soft Delete Disabled: prod-keyvault</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">KeyVault / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">prod-keyvault</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §8.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Key Vault 'prod-keyvault' has no soft delete. Deleted secrets are unrecoverable.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Enable soft delete with 90-day retention.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#10. Key Vault Purge Protection Disabled: app-keyvault</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">KeyVault / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">app-keyvault</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §8.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Key Vault 'app-keyvault' can be permanently purged. No recovery possible.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Enable purge protection.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#11. Key Vault All Permissions Granted: secrets-vault</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">KeyVault / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">secrets-vault</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">NIST: PR.AC-1 | ISO: A.9 | PCI: 7.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Key Vault 'secrets-vault' grants ALL permissions to a service principal.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Restrict access policies to minimum required permissions.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#12. SQL TDE Disabled: user-db</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">SQL / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">prod-sql-server/user-db</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §4.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Azure SQL database 'user-db' has Transparent Data Encryption disabled. Data at rest is unencrypted.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Enable TDE on the database.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#13. SQL Auditing Disabled: prod-sql-server</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">SQL / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">prod-sql-server</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §4.3</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">SQL Server 'prod-sql-server' auditing is disabled. No database activity log.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Enable SQL Server Auditing with 90+ day retention.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#14. SQL Server Public Access Enabled: dev-sql-server</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">SQL / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">dev-sql-server</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §4.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">SQL Server 'dev-sql-server' is accessible from public Internet.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Disable public network access. Use Private Endpoint.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #f85149;background:rgba(248,81,73,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#15. No Subscription Diagnostic Settings</strong>
+            <span style="background:#f85149;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">High</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">Monitor / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">subscription</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §5.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">No diagnostic settings found. Admin operations not being logged.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Create diagnostic setting to export Activity Logs to Log Analytics.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #d29922;background:rgba(210,153,34,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#16. Too Many Subscription Owners</strong>
+            <span style="background:#d29922;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Medium</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">IAM / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">subscription</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §1.3</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">5 Owner role assignments found. CIS recommends max 3.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Reduce Owners to 2-3. Use PIM for JIT privileged access.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #d29922;background:rgba(210,153,34,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#17. Storage Minimum TLS Not 1.2: logstorage</strong>
+            <span style="background:#d29922;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Medium</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">Storage / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">logstorage</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §3.2</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Storage account 'logstorage' minimum TLS is TLS1_0. Deprecated protocol.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Set minimumTlsVersion to TLS1_2.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #d29922;background:rgba(210,153,34,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#18. Storage Soft Delete Disabled: devstorageacct</strong>
+            <span style="background:#d29922;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Medium</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">Storage / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">devstorageacct</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §3.2</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Blob soft delete disabled. Accidental deletions are unrecoverable.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Enable soft delete with 7-day retention.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #d29922;background:rgba(210,153,34,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#19. Storage Allows All Network Traffic: appstorageacct</strong>
+            <span style="background:#d29922;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Medium</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">Storage / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">appstorageacct</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §3.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Network rules default to Allow. All IPs can reach the storage account.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Set defaultAction=Deny and whitelist specific VNets.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #d29922;background:rgba(210,153,34,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#20. VM Uses Unmanaged Disk: dev-vm-002</strong>
+            <span style="background:#d29922;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Medium</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">VM / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">dev-vm-002</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §7.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">VM 'dev-vm-002' uses unmanaged OS disk. Not covered by managed backup.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Migrate to Managed Disks.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #d29922;background:rgba(210,153,34,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#21. NSG Exposes MSSQL(1433) to Internet: db-nsg</strong>
+            <span style="background:#d29922;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Medium</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">NSG / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">db-nsg</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §6.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">NSG 'db-nsg' exposes MSSQL port 1433 to Internet. Database at risk.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Move SQL to private subnet with no internet access.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #d29922;background:rgba(210,153,34,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#22. Key Vault Public Network Access: dev-keyvault</strong>
+            <span style="background:#d29922;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Medium</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">KeyVault / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">dev-keyvault</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §8.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Key Vault 'dev-keyvault' accessible from all networks. Attack surface exposed.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Restrict to VNet or use Private Endpoint.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #d29922;background:rgba(210,153,34,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#23. SQL Advanced Threat Protection Disabled: prod-sql-server</strong>
+            <span style="background:#d29922;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Medium</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">SQL / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">prod-sql-server</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">MS Cloud Well-Arch: Security</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Advanced Threat Protection not enabled. SQL injection attacks go undetected.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Enable Microsoft Defender for SQL.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #d29922;background:rgba(210,153,34,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#24. No Activity Log Alerts Configured</strong>
+            <span style="background:#d29922;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Medium</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">Monitor / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">subscription</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">CIS Azure v2.0 §5.1</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">No activity log alerts. Security-critical events trigger no notifications.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Create activity log alerts for NSG changes, policy assignments, etc.</td></tr>
+          </table>
+        </div>
+        <div style="border-left:3px solid #3fb950;background:rgba(63,185,80,.12);padding:14px 18px;margin-bottom:12px;border-radius:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:14px;color:#e6edf3;">#25. VM Boot Diagnostics Disabled: worker-vm-003</strong>
+            <span style="background:#3fb950;color:white;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.3px;">Low</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;">
+            <tr><td style="width:120px;font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Resource</td><td style="color:#c9d1d9;">VM / <code style="background:#21262d;padding:1px 6px;border-radius:3px;font-size:11px;color:#58a6ff;">worker-vm-003</code></td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;">Compliance</td><td style="color:#c9d1d9;">MS Cloud Well-Arch: Security</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">Issue</td><td style="color:#c9d1d9;line-height:1.5;">Boot diagnostics disabled. VM startup issues cannot be diagnosed.</td></tr>
+            <tr><td style="font-weight:600;padding:4px 0;color:#8b949e;vertical-align:top;">🔧 Fix</td><td style="color:#58a6ff;line-height:1.5;">Enable boot diagnostics to a storage account.</td></tr>
+          </table>
+        </div>
+  </div>
+</div>
+<footer>Generated by <span>Cloud Security Analyzer (CSA)</span> &nbsp;|&nbsp; 2026-05-10 20:14 UTC &nbsp;|&nbsp; University of Wah FYP</footer>
+</body></html>

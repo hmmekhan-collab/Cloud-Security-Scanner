@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — Cloud Security Analyzer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 40px; width: 100%; max-width: 440px; }
+    .logo { text-align: center; margin-bottom: 24px; }
+    .logo .icon { font-size: 40px; }
+    .logo h1 { font-size: 20px; font-weight: 700; margin-top: 8px; }
+    .logo h1 span { color: #58a6ff; }
+    h2 { font-size: 18px; margin-bottom: 4px; }
+    p.sub { font-size: 13px; color: #8b949e; margin-bottom: 24px; }
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 5px; }
+    input {
+      width: 100%; padding: 9px 12px;
+      background: #21262d; border: 1px solid #30363d;
+      border-radius: 6px; color: #e6edf3;
+      font-family: 'Inter', sans-serif; font-size: 13px;
+      transition: border-color .15s;
+    }
+    input:focus { outline: none; border-color: #58a6ff; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .btn { width: 100%; padding: 10px; background: #1f6feb; border: none; border-radius: 6px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 6px; transition: background .15s; }
+    .btn:hover { background: #388bfd; }
+    .link-row { text-align: center; font-size: 12px; color: #8b949e; margin-top: 16px; }
+    .link-row a { color: #58a6ff; text-decoration: none; }
+    .alert { padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; font-size: 12px; }
+    .alert-danger { background: rgba(248,81,73,.12); border: 1px solid rgba(248,81,73,.3); color: #f85149; }
+    .alert-success { background: rgba(63,185,80,.12); border: 1px solid rgba(63,185,80,.3); color: #3fb950; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="icon">☁</div>
+      <h1>Cloud Security <span>Analyzer</span></h1>
+    </div>
+    <h2>Create Account</h2>
+    <p class="sub">Set up your CSA account to start auditing</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for cat, msg in messages %}
+        <div class="alert alert-{{ cat }}">{{ msg }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" name="full_name" placeholder="Hamza Idrees" required>
+        </div>
+        <div class="form-group">
+          <label>Organization</label>
+          <input type="text" name="organization" placeholder="University of Wah">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Address *</label>
+        <input type="email" name="email" placeholder="you@example.com" required>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Password *</label>
+          <input type="password" name="password" placeholder="Min. 8 characters" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label>Confirm Password *</label>
+          <input type="password" name="confirm_password" placeholder="Repeat password" required>
+        </div>
+      </div>
+      <button type="submit" class="btn">Create Account →</button>
+    </form>
+    <div class="link-row">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></div>
+  </div>
+</body>
+</html>

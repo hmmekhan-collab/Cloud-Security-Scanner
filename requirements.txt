@@ -1,0 +1,21 @@
+Flask==3.1.2
+Flask-SQLAlchemy==3.1.1
+Werkzeug==3.1.5
+boto3==1.35.0
+botocore==1.35.0
+reportlab==4.4.10
+pandas==2.0.0
+openpyxl==3.1.5
+supabase
+python-dotenv
+# Azure SDK
+azure-identity
+azure-mgmt-resource
+azure-mgmt-authorization
+azure-mgmt-storage
+azure-mgmt-compute
+azure-mgmt-network
+azure-mgmt-keyvault
+azure-mgmt-sql
+azure-mgmt-monitor
+azure-mgmt-security
